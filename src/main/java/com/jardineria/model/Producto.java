@@ -1,9 +1,6 @@
 package com.jardineria.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,4 +21,9 @@ public class Producto {
     private String descripcion;
     private Double precio;
     private String imagen;
+
+    // Relación con categoria
+    @ManyToOne
+    @JoinColumn(name = "categoria_id") // crea la columna categoria_id en la tabla producto
+    private Categoria categoria;
 }

@@ -2,53 +2,42 @@ package com.jardineria.controller;
 
 import com.jardineria.model.Usuario;
 import com.jardineria.service.UsuarioService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/usuarios")
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/jardineria/usuarios")
+@RequiredArgsConstructor
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
-
-    // Listar usuarios
     @GetMapping
-    public String listarUsuarios(Model model) {
-        model.addAttribute("usuarios", usuarioService.listar());
-        return "usuarios/listar"; // Thymeleaf template: usuarios/listar.html
+    public List<Usuario> listarUsuarios() {
+        return usuarioService.listar();
     }
 
-    // Formulario crear usuario
-    @GetMapping("/nuevo")
-    public String crearUsuarioForm(Model model) {
-        model.addAttribute("usuario", new Usuario());
-        return "usuarios/form";
+    @GetMapping("/{id}")
+    public Optional<Usuario> obtenerUsuario(@PathVariable Long id) {
+        return usuarioService.obtenerPorId(id);
     }
 
-    // Guardar usuario
-    @PostMapping("/guardar")
-    public String guardarUsuario(@ModelAttribute Usuario usuario) {
-        usuarioService.guardar(usuario);
-        return "redirect:/usuarios";
+    @PostMapping
+    public Usuario crearUsuario(@RequestBody Usuario usuario) {
+        return usuarioService.guardar(usuario);
     }
 
-    // Editar usuario
-    @GetMapping("/editar/{id}")
-    public String editarUsuarioForm(@PathVariable Long id, Model model) {
-        Usuario usuario = usuarioService.obtenerPorId(id).orElseThrow();
-        model.addAttribute("usuario", usuario);
-        return "usuarios/form";
+    @PutMapping("/{id}")
+    public Usuario actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
+        usuario.setId(id); // aseguramos que tenga el id correcto
+        return usuarioService.guardar(usuario);
     }
 
-    // Eliminar usuario
-    @GetMapping("/eliminar/{id}")
-    public String eliminarUsuario(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public void eliminarUsuario(@PathVariable Long id) {
         usuarioService.eliminar(id);
-        return "redirect:/usuarios";
     }
 }

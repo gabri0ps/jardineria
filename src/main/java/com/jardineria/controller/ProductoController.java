@@ -1,59 +1,48 @@
 package com.jardineria.controller;
 
 import com.jardineria.model.Producto;
-import com.jardineria.service.CategoriaService;
 import com.jardineria.service.ProductoService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/productos")
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/jardineria/productos")
+@RequiredArgsConstructor
 public class ProductoController {
 
     private final ProductoService productoService;
-    private final CategoriaService categoriaService;
 
-    public ProductoController(ProductoService productoService, CategoriaService categoriaService) {
-        this.productoService = productoService;
-        this.categoriaService = categoriaService;
-    }
-
-    // Listar productos
     @GetMapping
-    public String listarProductos(Model model) {
-        model.addAttribute("productos", productoService.listar());
-        return "productos/listar";
+    public List<Producto> listarProductos() {
+        return productoService.listar();
     }
 
-    // Formulario crear producto
-    @GetMapping("/nuevo")
-    public String crearProductoForm(Model model) {
-        model.addAttribute("producto", new Producto());
-        model.addAttribute("categorias", categoriaService.listar());
-        return "productos/form";
+    @GetMapping("/{id}")
+    public Optional<Producto> obtenerProducto(@PathVariable Long id) {
+        return productoService.obtenerPorId(id);
     }
 
-    // Guardar producto
-    @PostMapping("/guardar")
-    public String guardarProducto(@ModelAttribute Producto producto) {
-        productoService.guardar(producto);
-        return "redirect:/productos";
+    @GetMapping("/categoria/{categoriaId}")
+    public List<Producto> listarPorCategoria(@PathVariable Long categoriaId) {
+        return productoService.listarPorCategoria(categoriaId);
     }
 
-    // Editar producto
-    @GetMapping("/editar/{id}")
-    public String editarProductoForm(@PathVariable Long id, Model model) {
-        Producto producto = productoService.obtenerPorId(id).orElseThrow();
-        model.addAttribute("producto", producto);
-        model.addAttribute("categorias", categoriaService.listar());
-        return "productos/form";
+    @PostMapping
+    public Producto crearProducto(@RequestBody Producto producto) {
+        return productoService.guardar(producto);
     }
 
-    // Eliminar producto
-    @GetMapping("/eliminar/{id}")
-    public String eliminarProducto(@PathVariable Long id) {
+    @PutMapping("/{id}")
+    public Producto actualizarProducto(@PathVariable Long id, @RequestBody Producto producto) {
+        producto.setId(id);
+        return productoService.guardar(producto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminarProducto(@PathVariable Long id) {
         productoService.eliminar(id);
-        return "redirect:/productos";
     }
 }
