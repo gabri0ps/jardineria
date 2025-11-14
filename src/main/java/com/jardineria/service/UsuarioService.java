@@ -2,6 +2,7 @@ package com.jardineria.service;
 
 import com.jardineria.model.Usuario;
 import com.jardineria.repository.UsuarioRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,5 +35,13 @@ public class UsuarioService {
 
     public Optional<Usuario> buscarPorEmail(String email) {
         return usuarioRepository.findByEmail(email);
+    }
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    public Usuario guardarUsuario(Usuario usuario) {
+        // Encriptar contraseña
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        return usuarioRepository.save(usuario);
     }
 }
