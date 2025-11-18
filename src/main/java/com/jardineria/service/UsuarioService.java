@@ -44,4 +44,10 @@ public class UsuarioService {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
+
+    public Optional<Usuario> login(String email, String password) {
+        return usuarioRepository.findByEmail(email)
+                .filter(u -> u.getPassword().equals(password));
+    }
+
 }

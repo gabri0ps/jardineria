@@ -6,25 +6,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
-@Table(name = "productos")
+@Table(name = "carrito")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Producto {
+public class Carrito {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombre;
-    private String descripcion;
-    private Double precio;
-    private String imagen;
+    @OneToOne
+    private Usuario usuario;
 
-    // Relación con categoria
-    @ManyToOne
-    @JoinColumn(name = "id_categoria")
-    private Categoria categoria;
+    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CarritoItem> items;
+
+    private double total;
 }
+

@@ -1,5 +1,6 @@
 package com.jardineria.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,5 +22,6 @@ public class Categoria {
 
     // Relación con productos
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("categoria")
     private List<Producto> productos;
 }

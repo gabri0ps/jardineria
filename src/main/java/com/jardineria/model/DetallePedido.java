@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "detalle_pedidos")
+@Table(name = "detalle_pedido")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,11 +21,11 @@ public class DetallePedido {
 
     // Relación con pedido
     @ManyToOne
-    @JoinColumn(name = "pedido_id")
+    @JoinColumn(name = "id_pedido")
     private Pedido pedido;
 
     // Relación con producto
     @ManyToOne
-    @JoinColumn(name = "producto_id")
+    @JoinColumn(name = "id_producto")
     private Producto producto;
 }

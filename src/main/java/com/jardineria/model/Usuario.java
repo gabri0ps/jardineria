@@ -35,9 +35,9 @@ public class Usuario {
     private String telefono;
 
     @Enumerated(EnumType.STRING)
-    private Rol rol = Rol.CLIENTE;
+    private Rol rol = Rol.cliente;
 
     public enum Rol {
-        CLIENTE, ADMIN
+        cliente, admin
     }
 }

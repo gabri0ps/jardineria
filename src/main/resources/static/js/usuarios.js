@@ -1,4 +1,4 @@
-const API_USUARIOS = "http://localhost:8080/jardineria/usuarios";
+const API_USUARIOS = "/jardineria/usuarios/registro"; // ✅ ruta correcta
 
 document.getElementById("formUsuario").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -6,10 +6,10 @@ document.getElementById("formUsuario").addEventListener("submit", async (e) => {
   const usuario = {
     nombre: document.getElementById("nombre").value,
     email: document.getElementById("email").value,
-    password: document.getElementById("password").value,
-    direccion: document.getElementById("direccion").value,
-    telefono: document.getElementById("telefono").value,
-    rol: "CLIENTE"
+    password: document.getElementById("password").value,  // si agregaste password
+    direccion: document.getElementById("direccion")?.value,
+    telefono: document.getElementById("telefono")?.value,
+    rol: "cliente" // coincide con tu enum Rol en mayúsculas
   };
 
   try {
@@ -19,14 +19,16 @@ document.getElementById("formUsuario").addEventListener("submit", async (e) => {
       body: JSON.stringify(usuario)
     });
 
-    if (!res.ok) throw new Error("Error al registrar usuario");
+    if (!res.ok) {
+      const error = await res.text();
+      throw new Error(error);
+    }
 
-    const data = await res.json();
-    alert(`Usuario ${data.nombre} registrado correctamente`);
+    const data = await res.text();
+    alert(data);
     e.target.reset();
 
-  } catch (error) {
-    console.error("Error:", error);
-    alert("No se pudo registrar el usuario");
+  } catch (err) {
+    alert(`Error: ${err.message}`);
   }
 });
