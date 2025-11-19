@@ -1,5 +1,6 @@
 package com.jardineria.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,17 +16,17 @@ public class DetallePedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer cantidad;
+    private int cantidad;
 
-    private Double subtotal;
+    @Column(name = "precio_unitario")
+    private double precioUnitario;
 
-    // Relación con pedido
-    @ManyToOne
-    @JoinColumn(name = "id_pedido")
-    private Pedido pedido;
-
-    // Relación con producto
     @ManyToOne
     @JoinColumn(name = "id_producto")
     private Producto producto;
+
+    @ManyToOne
+    @JoinColumn(name = "id_pedido")
+    @JsonBackReference
+    private Pedido pedido;
 }

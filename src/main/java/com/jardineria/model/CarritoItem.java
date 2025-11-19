@@ -1,5 +1,6 @@
 package com.jardineria.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,10 +17,14 @@ public class CarritoItem {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "id_producto")
     private Producto producto;
 
     private int cantidad;
 
     @ManyToOne
+    @JoinColumn(name = "id_carrito")
+    @JsonBackReference
     private Carrito carrito;
 }
+

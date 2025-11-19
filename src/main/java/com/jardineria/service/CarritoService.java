@@ -3,9 +3,15 @@ package com.jardineria.service;
 import com.jardineria.model.Carrito;
 import com.jardineria.model.CarritoItem;
 import com.jardineria.model.Producto;
+import com.jardineria.model.Usuario;
+import com.jardineria.repository.CarritoRepository;
+import com.jardineria.repository.ProductoRepository;
+import com.jardineria.repository.CarritoItemRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -18,14 +24,23 @@ public class CarritoService {
 
     public Carrito obtenerCarrito(Long usuarioId) {
         return carritoRepository.findByUsuarioId(usuarioId)
+                .map(carrito -> {
+                    if (carrito.getItems() == null) {
+                        carrito.setItems(new ArrayList<>());
+                    }
+                    return carrito;
+                })
                 .orElseGet(() -> {
                     Carrito carrito = Carrito.builder()
                             .usuario(Usuario.builder().id(usuarioId).build())
                             .total(0)
+                            .items(new ArrayList<>())
                             .build();
                     return carritoRepository.save(carrito);
                 });
     }
+
+
 
     public Carrito agregarProducto(Long usuarioId, Long productoId, int cantidad) {
         Carrito carrito = obtenerCarrito(usuarioId);
@@ -70,6 +85,21 @@ public class CarritoService {
                 .mapToDouble(i -> i.getProducto().getPrecio() * i.getCantidad())
                 .sum();
         carrito.setTotal(total);
+    }
+
+    // Vaciar el carrito de un usuario
+    @Transactional
+    public void vaciarCarrito(Long usuarioId) {
+        // Obtener carrito del usuario
+        Carrito carrito = carritoRepository.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+
+        // Eliminar todos los items del carrito
+        carritoItemRepository.deleteAll(carrito.getItems());
+
+        // Actualizar total del carrito a 0
+        carrito.setTotal(0.0);
+        carritoRepository.save(carrito);
     }
 }
 

@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+header h1 {
+    text-align: center;
+    color: #2e7d32;
+}
+
+#carrito-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#tabla-carrito {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#tabla-carrito th {
+    background: #2e7d32;
+    color: white;
+    padding: 10px;
+}
+
+#tabla-carrito td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#carrito-total {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    text-align: right;
+    font-weight: bold;
+}
+
+.btn-eliminar {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#btn-comprar {
+    width: 100%;
+    padding: 15px;
+    background: #2e7d32;
+    color: white;
+    border: none;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+#btn-comprar:hover {
+    background: #1b5e20;
+}

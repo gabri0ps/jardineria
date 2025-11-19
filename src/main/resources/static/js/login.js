@@ -17,7 +17,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         if (res.ok) {
             const usuario = await res.json();
             alert(`Bienvenido, ${usuario.nombre}`);
-            window.location.href = "/"; // Redirige a la página principal
+
+            // Guardamos el usuario en localStorage para usarlo en el carrito
+            localStorage.setItem("usuario", JSON.stringify(usuario));
+
+            window.location.href = "catalogo.html";
         } else {
             const msg = await res.text();
             errorMsg.textContent = msg;

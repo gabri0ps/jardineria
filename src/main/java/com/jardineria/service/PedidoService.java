@@ -1,39 +1,62 @@
 package com.jardineria.service;
 
+import com.jardineria.model.Carrito;
+import com.jardineria.model.CarritoItem;
+import com.jardineria.model.DetallePedido;
 import com.jardineria.model.Pedido;
-import com.jardineria.model.Usuario;
+import com.jardineria.repository.CarritoRepository;
 import com.jardineria.repository.PedidoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
+    private final CarritoRepository carritoRepository;
 
-    public PedidoService(PedidoRepository pedidoRepository) {
-        this.pedidoRepository = pedidoRepository;
-    }
+    @Transactional
+    public Pedido finalizarPedido(Long usuarioId) {
+        // Obtener el carrito del usuario
+        Carrito carrito = carritoRepository.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
-    public List<Pedido> listar() {
-        return pedidoRepository.findAll();
-    }
+        if (carrito.getItems() == null || carrito.getItems().isEmpty()) {
+            throw new RuntimeException("El carrito está vacío");
+        }
 
-    public Optional<Pedido> obtenerPorId(Long id) {
-        return pedidoRepository.findById(id);
-    }
+        // Crear pedido
+        Pedido pedido = Pedido.builder()
+                .usuario(carrito.getUsuario())
+                .total(carrito.getTotal())
+                .estado(Pedido.EstadoPedido.PENDIENTE)
+                .build();
 
-    public Pedido guardar(Pedido pedido) {
-        return pedidoRepository.save(pedido);
-    }
+        // Convertir items del carrito en items del pedido
+        List<DetallePedido> detalles = carrito.getItems().stream().map(item -> {
+            return DetallePedido.builder()
+                    .producto(item.getProducto())
+                    .cantidad(item.getCantidad())
+                    .precioUnitario(item.getProducto().getPrecio())
+                    .pedido(pedido)
+                    .build();
+        }).collect(Collectors.toList());
 
-    public void eliminar(Long id) {
-        pedidoRepository.deleteById(id);
-    }
+        pedido.setItems(detalles);
 
-    public List<Pedido> listarPorUsuario(Usuario usuario) {
-        return pedidoRepository.findByUsuario(usuario);
+        // Guardar pedido
+        Pedido pedidoGuardado = pedidoRepository.save(pedido);
+
+        // Vaciar carrito
+        carrito.getItems().clear();
+        carrito.setTotal(0.0);
+        carritoRepository.save(carrito);
+
+        return pedidoGuardado;
     }
 }

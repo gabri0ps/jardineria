@@ -22,12 +22,13 @@ async function listarProductos() {
   });
 }
 
-// Carrito en localStorage
-function agregarAlCarrito(id, nombre, precio) {
-  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-  carrito.push({id, nombre, precio});
-  localStorage.setItem("carrito", JSON.stringify(carrito));
-  alert(`${nombre} agregado al carrito`);
+function agregarAlCarrito(productoId) {
+    fetch(`/carrito/${usuarioId}/agregar?productoId=${productoId}&cantidad=1`, {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(() => alert("Producto añadido al carrito"));
 }
+
 
 window.onload = listarProductos;

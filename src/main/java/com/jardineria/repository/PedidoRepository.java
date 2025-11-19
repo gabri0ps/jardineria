@@ -1,10 +1,10 @@
 package com.jardineria.repository;
 
 import com.jardineria.model.Pedido;
-import com.jardineria.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.List;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
-    List<Pedido> findByUsuario(Usuario usuario);
+    // Aquí puedes añadir métodos personalizados si quieres buscar pedidos por usuario, estado, etc.
 }

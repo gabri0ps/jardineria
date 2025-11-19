@@ -1,5 +1,6 @@
 package com.jardineria.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,16 +19,31 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime fecha;
-
-    private Double total;
-
-    // Relación con usuario
     @ManyToOne
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    // Relación con detalles de pedido
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private List<DetallePedido> detalles;
+    private LocalDateTime fecha;
+
+    private Double total;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoPedido estado = EstadoPedido.PENDIENTE;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_pedido")
+    @JsonManagedReference
+    private List<DetallePedido> items;
+
+    @PrePersist
+    public void prePersist() {
+        if (fecha == null) {
+            fecha = LocalDateTime.now();
+        }
+    }
+
+    public enum EstadoPedido {
+        PENDIENTE, ENVIADO, ENTREGADO, CANCELADO
+    }
 }
+
