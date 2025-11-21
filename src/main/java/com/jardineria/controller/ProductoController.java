@@ -1,8 +1,11 @@
 package com.jardineria.controller;
 
 import com.jardineria.model.Producto;
+import com.jardineria.model.Usuario;
 import com.jardineria.service.ProductoService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +34,11 @@ public class ProductoController {
     }
 
     @PostMapping
-    public Producto crearProducto(@RequestBody Producto producto) {
+    public Producto crearProducto(@RequestBody Producto producto, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        if (usuario == null || !usuario.getRol().equals(Usuario.Rol.admin)) {
+            throw new RuntimeException("No tienes permiso para crear productos");
+        }
         return productoService.guardar(producto);
     }
 

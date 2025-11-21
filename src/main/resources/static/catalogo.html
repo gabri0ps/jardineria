@@ -11,8 +11,21 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Catálogo de Productos</h1>
-        <button id="btn-ver-carrito" class="btn btn-primary">🛒 Ver Carrito</button>
+        <div>
+            <button id="btn-ver-carrito" class="btn btn-primary">🛒 Carrito</button>
+            <button id="btn-crear-producto" class="btn btn-success" style="display:none;">➕ Crear Producto</button>
+        </div>
     </div>
+
+    <!-- Formulario oculto para crear producto -->
+    <div id="form-crear-producto" class="mb-4" style="display:none;">
+        <input type="text" id="nombre" placeholder="Nombre" class="form-control mb-2">
+        <input type="text" id="descripcion" placeholder="Descripción" class="form-control mb-2">
+        <input type="number" id="precio" placeholder="Precio" class="form-control mb-2">
+        <input type="number" id="stock" placeholder="Stock" class="form-control mb-2">
+        <button id="btn-submit-producto" class="btn btn-success">Guardar Producto</button>
+    </div>
+
     <div id="productos" class="row g-4"></div>
 </div>
 

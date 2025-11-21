@@ -1,14 +1,56 @@
 const API_PRODUCTOS = "http://localhost:8080/jardineria/productos";
-const API_CARRITO = "http://localhost:8080/carrito"; // Ajustado al controller actual
+const API_CARRITO = "http://localhost:8080/carrito";
 
-// Obtener usuario desde localStorage
-let usuario = JSON.parse(localStorage.getItem("usuario"));
-if (!usuario) {
-    alert("Debes iniciar sesión para acceder al catálogo");
-    window.location.href = "login.html";
+const usuario = JSON.parse(localStorage.getItem("usuario"));
+let usuarioId = usuario ? usuario.id : null;
+
+// Mostrar botón crear producto solo si es admin
+if (usuario && usuario.rol === "admin") {
+    document.getElementById("btn-crear-producto").style.display = "inline-block";
+
+    document.getElementById("btn-crear-producto").addEventListener("click", () => {
+        document.getElementById("form-crear-producto").style.display = "block";
+    });
+
+    document.getElementById("btn-submit-producto").addEventListener("click", async () => {
+        const nombre = document.getElementById("nombre").value;
+        const descripcion = document.getElementById("descripcion").value;
+        const precio = parseFloat(document.getElementById("precio").value);
+        const stock = parseInt(document.getElementById("stock").value);
+
+        try {
+            const res = await fetch(API_PRODUCTOS, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nombre, descripcion, precio, stock })
+            });
+
+            if (res.ok) {
+                alert("Producto creado correctamente");
+                cargarProductos();
+                document.getElementById("form-crear-producto").style.display = "none";
+            } else {
+                const msg = await res.text();
+                alert("Error al crear producto: " + msg);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error de conexión");
+        }
+    });
 }
 
-// Cargar productos desde el backend
+// Botón ver carrito
+document.getElementById("btn-ver-carrito").addEventListener("click", () => {
+    if (!usuarioId) {
+        alert("Debes iniciar sesión para ver el carrito");
+        return;
+    }
+    window.location.href = "carrito.html";
+});
+
+// Cargar productos
 async function cargarProductos() {
     try {
         const res = await fetch(API_PRODUCTOS);
@@ -35,31 +77,33 @@ async function cargarProductos() {
             `;
             contenedor.appendChild(card);
         });
-    } catch (error) {
-        console.error("Error al cargar productos:", error);
+    } catch (err) {
+        console.error("Error al cargar productos:", err);
     }
 }
 
-// Agregar producto al carrito
+// Añadir producto al carrito
 async function añadirAlCarrito(productoId) {
+    if (!usuarioId) {
+        alert("Debes iniciar sesión para añadir productos al carrito");
+        return;
+    }
+
     try {
-        const url = `${API_CARRITO}/${usuario.id}/agregar?productoId=${productoId}&cantidad=1`;
-        const res = await fetch(url, { method: "POST" });
+        const res = await fetch(`${API_CARRITO}/${usuarioId}/agregar?productoId=${productoId}&cantidad=1`, {
+            method: "POST",
+            credentials: "include"   // por si el carrito usa sesión también
+        });
 
         if (res.ok) {
             alert("Producto añadido al carrito");
         } else {
             alert("No se pudo añadir el producto al carrito");
         }
-    } catch (error) {
-        console.error("Error al añadir al carrito:", error);
+    } catch (err) {
+        console.error(err);
+        alert("Error al añadir producto al carrito");
     }
 }
 
-// Botón para abrir carrito
-document.getElementById("btn-ver-carrito").addEventListener("click", () => {
-    window.location.href = "carrito.html";
-});
-
-// Inicializar productos al cargar la página
 cargarProductos();

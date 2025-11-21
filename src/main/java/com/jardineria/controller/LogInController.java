@@ -2,8 +2,14 @@ package com.jardineria.controller;
 
 import com.jardineria.model.Usuario;
 import com.jardineria.service.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/jardineria/auth")
@@ -12,19 +18,43 @@ public class LogInController {
 
     private final UsuarioService usuarioService;
 
-    // Constructor único
     public LogInController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
-    // Endpoint de login
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Usuario userReq) {
+    public ResponseEntity<?> login(@RequestBody Usuario userReq, HttpSession session) {
+
+        // 1️⃣ Comprobamos credenciales manualmente
         var usuario = usuarioService.login(userReq.getEmail(), userReq.getPassword());
-        if (usuario.isPresent()) {
-            return ResponseEntity.ok(usuario.get());
-        } else {
+        if (usuario.isEmpty()) {
             return ResponseEntity.status(401).body("Credenciales incorrectas");
         }
+
+        // 2️⃣ Creamos autenticación para Spring Security
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(
+                        usuario.get().getEmail(),
+                        usuario.get().getPassword(),
+                        List.of(new SimpleGrantedAuthority("ROLE_" + usuario.get().getRol().name().toUpperCase()))
+                );
+
+        // 3️⃣ Subimos al contexto de seguridad
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        // 4️⃣ Aseguramos que Spring use la misma sesión
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+        // 5️⃣ (Opcional) Guardamos tu objeto usuario
+        session.setAttribute("usuario", usuario.get());
+
+        return ResponseEntity.ok(usuario.get());
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Sesión cerrada");
     }
 }
