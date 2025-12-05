@@ -1,14 +1,54 @@
 const API_PRODUCTOS = "http://localhost:8080/jardineria/productos";
 const API_CARRITO = "http://localhost:8080/carrito";
+const API_CATEGORIAS = "http://localhost:8080/jardineria/categorias";
 
+// Verificar si hay usuario logueado
 const usuario = JSON.parse(localStorage.getItem("usuario"));
-let usuarioId = usuario ? usuario.id : null;
+if (!usuario) {
+    alert("Debes iniciar sesión para acceder a esta página");
+    window.location.href = "login.html";
+    throw new Error("No hay usuario logueado");
+}
+const usuarioId = usuario.id;
 
-// Mostrar botón crear producto solo si es admin
-if (usuario && usuario.rol === "admin") {
-    document.getElementById("btn-crear-producto").style.display = "inline-block";
+// ---- Cerrar sesión ----
+const btnCerrarSesion = document.createElement("button");
+btnCerrarSesion.textContent = "Cerrar sesión";
+btnCerrarSesion.className = "btn btn-warning ms-2";
+btnCerrarSesion.addEventListener("click", () => {
+    localStorage.removeItem("usuario");
+    alert("Sesión cerrada");
+    window.location.href = "login.html";
+});
+document.querySelector(".d-flex").appendChild(btnCerrarSesion);
 
-    document.getElementById("btn-crear-producto").addEventListener("click", () => {
+// ---- Cargar categorías para formulario ----
+async function cargarCategorias() {
+    try {
+        const res = await fetch(API_CATEGORIAS);
+        const categorias = await res.json();
+
+        const select = document.getElementById("categoria");
+        select.innerHTML = '<option value="">Seleccione una categoría</option>';
+
+        categorias.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat.id;
+            option.textContent = cat.nombre;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error("Error cargando categorías:", err);
+    }
+}
+cargarCategorias();
+
+// ---- Mostrar formulario y crear producto (solo admin) ----
+if (usuario.rol === "admin") {
+    const btnCrear = document.getElementById("btn-crear-producto");
+    btnCrear.style.display = "inline-block";
+
+    btnCrear.addEventListener("click", () => {
         document.getElementById("form-crear-producto").style.display = "block";
     });
 
@@ -17,13 +57,25 @@ if (usuario && usuario.rol === "admin") {
         const descripcion = document.getElementById("descripcion").value;
         const precio = parseFloat(document.getElementById("precio").value);
         const stock = parseInt(document.getElementById("stock").value);
+        const categoriaId = parseInt(document.getElementById("categoria").value);
+
+        if (!categoriaId) {
+            alert("Selecciona una categoría");
+            return;
+        }
 
         try {
             const res = await fetch(API_PRODUCTOS, {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ nombre, descripcion, precio, stock })
+                body: JSON.stringify({
+                    nombre,
+                    descripcion,
+                    precio,
+                    stock,
+                    categoria: { id: categoriaId }
+                })
             });
 
             if (res.ok) {
@@ -41,16 +93,12 @@ if (usuario && usuario.rol === "admin") {
     });
 }
 
-// Botón ver carrito
+// ---- Botón ver carrito ----
 document.getElementById("btn-ver-carrito").addEventListener("click", () => {
-    if (!usuarioId) {
-        alert("Debes iniciar sesión para ver el carrito");
-        return;
-    }
     window.location.href = "carrito.html";
 });
 
-// Cargar productos
+// ---- Cargar productos ----
 async function cargarProductos() {
     try {
         const res = await fetch(API_PRODUCTOS);
@@ -72,6 +120,7 @@ async function cargarProductos() {
                         <button class="btn btn-primary mt-auto" onclick="añadirAlCarrito(${p.id})">
                             Añadir al carrito
                         </button>
+                        ${usuario.rol === "admin" ? `<button class="btn btn-danger mt-2" onclick="eliminarProducto(${p.id})">Eliminar</button>` : ""}
                     </div>
                 </div>
             `;
@@ -82,17 +131,39 @@ async function cargarProductos() {
     }
 }
 
-// Añadir producto al carrito
-async function añadirAlCarrito(productoId) {
-    if (!usuarioId) {
-        alert("Debes iniciar sesión para añadir productos al carrito");
+// ---- Eliminar producto ----
+async function eliminarProducto(productoId) {
+    if (usuario.rol !== "admin") {
+        alert("No tienes permisos para eliminar productos");
         return;
     }
+    if (!confirm("¿Seguro que quieres eliminar este producto?")) return;
 
+    try {
+        const res = await fetch(`${API_PRODUCTOS}/${productoId}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        if (res.ok) {
+            alert("Producto eliminado correctamente");
+            cargarProductos();
+        } else {
+            const msg = await res.text();
+            alert("Error al eliminar producto: " + msg);
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error de conexión");
+    }
+}
+
+// ---- Añadir producto al carrito ----
+async function añadirAlCarrito(productoId) {
     try {
         const res = await fetch(`${API_CARRITO}/${usuarioId}/agregar?productoId=${productoId}&cantidad=1`, {
             method: "POST",
-            credentials: "include"   // por si el carrito usa sesión también
+            credentials: "include"
         });
 
         if (res.ok) {
@@ -106,4 +177,5 @@ async function añadirAlCarrito(productoId) {
     }
 }
 
+// ---- Inicializar ----
 cargarProductos();

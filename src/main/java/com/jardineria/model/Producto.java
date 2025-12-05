@@ -22,6 +22,8 @@ public class Producto {
     private String descripcion;
     private Double precio;
     private String imagen;
+    private Integer stock;
+
 
     // Relación con categoria
     @ManyToOne

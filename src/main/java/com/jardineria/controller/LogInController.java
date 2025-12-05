@@ -25,13 +25,13 @@ public class LogInController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario userReq, HttpSession session) {
 
-        // 1️⃣ Comprobamos credenciales manualmente
+        // Comprobamos credenciales manualmente
         var usuario = usuarioService.login(userReq.getEmail(), userReq.getPassword());
         if (usuario.isEmpty()) {
             return ResponseEntity.status(401).body("Credenciales incorrectas");
         }
 
-        // 2️⃣ Creamos autenticación para Spring Security
+        // Creamos autenticación para Spring Security
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
                         usuario.get().getEmail(),
@@ -39,13 +39,12 @@ public class LogInController {
                         List.of(new SimpleGrantedAuthority("ROLE_" + usuario.get().getRol().name().toUpperCase()))
                 );
 
-        // 3️⃣ Subimos al contexto de seguridad
+        // Subimos al contexto de seguridad
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        // 4️⃣ Aseguramos que Spring use la misma sesión
+        // Aseguramos que Spring use la misma sesión
         session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-        // 5️⃣ (Opcional) Guardamos tu objeto usuario
         session.setAttribute("usuario", usuario.get());
 
         return ResponseEntity.ok(usuario.get());

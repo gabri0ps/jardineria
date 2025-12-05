@@ -1,16 +1,27 @@
-const API_CARRITO = "http://localhost:8080/carrito"; // Ajustado al controller actual
+const API_CARRITO = "http://localhost:8080/carrito";
 
 // Obtener usuario del localStorage
 const usuario = JSON.parse(localStorage.getItem("usuario"));
-let usuarioId = usuario ? usuario.id : null;
+if (!usuario) {
+    alert("Debes iniciar sesión para acceder al carrito");
+    window.location.href = "login.html";
+    throw new Error("No hay usuario logueado");
+}
+const usuarioId = usuario.id;
 
-// Botón finalizar compra
+// ---- Botón cerrar sesión ----
+const btnCerrarSesion = document.createElement("button");
+btnCerrarSesion.textContent = "Cerrar sesión";
+btnCerrarSesion.className = "btn btn-warning ms-2";
+btnCerrarSesion.addEventListener("click", () => {
+    localStorage.removeItem("usuario");
+    alert("Sesión cerrada");
+    window.location.href = "login.html";
+});
+document.querySelector(".d-flex").appendChild(btnCerrarSesion);
+
+// ---- Botón finalizar compra ----
 document.getElementById("btn-comprar").addEventListener("click", async () => {
-    if (!usuarioId) {
-        alert("Debes iniciar sesión para comprar");
-        return;
-    }
-
     try {
         const res = await fetch(`http://localhost:8080/pedido/finalizar/${usuarioId}`, {
             method: "POST"
@@ -29,10 +40,8 @@ document.getElementById("btn-comprar").addEventListener("click", async () => {
     }
 });
 
-// Función para cargar carrito
+// ---- Cargar carrito ----
 async function cargarCarrito() {
-    if (!usuarioId) return;
-
     try {
         const res = await fetch(`http://localhost:8080/carrito/${usuarioId}`);
         const carrito = await res.json();
@@ -42,7 +51,7 @@ async function cargarCarrito() {
     }
 }
 
-// Renderizar carrito en HTML
+// ---- Renderizar carrito ----
 function renderCarrito(carrito) {
     const tbody = document.getElementById("carrito-body");
     tbody.innerHTML = "";
@@ -61,7 +70,7 @@ function renderCarrito(carrito) {
             <td>${item.producto.precio.toFixed(2)} €</td>
             <td>${(item.producto.precio * item.cantidad).toFixed(2)} €</td>
             <td>
-                <button onclick="eliminarItem(${item.id})" class="btn-eliminar">❌</button>
+                <button onclick="eliminarItem(${item.id})" class="btn btn-danger btn-sm">❌</button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -70,10 +79,8 @@ function renderCarrito(carrito) {
     document.getElementById("total").textContent = carrito.total.toFixed(2) + " €";
 }
 
-// Eliminar item del carrito
+// ---- Eliminar item ----
 async function eliminarItem(itemId) {
-    if (!usuarioId) return;
-
     try {
         const res = await fetch(`http://localhost:8080/carrito/${usuarioId}/eliminar/${itemId}`, { method: "DELETE" });
         const carrito = await res.json();
@@ -83,5 +90,5 @@ async function eliminarItem(itemId) {
     }
 }
 
-// Cargar carrito al iniciar
+// ---- Inicializar ----
 cargarCarrito();
