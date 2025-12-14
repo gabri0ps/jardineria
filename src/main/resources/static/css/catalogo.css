@@ -23,3 +23,31 @@ h1 {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
+
+
+/* Aumentar la altura mínima de las cartas para dar más espacio a la imagen y el contenido */
+#productos .card {
+    min-height: 450px; /* ajusta según prefieras */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Imagen más grande y centrada dentro de la carta */
+#productos .card-img-top {
+    height: 250px; /* un poco más grande que antes */
+    object-fit: cover;
+}
+
+/* Ajuste de los botones y cuerpo de la carta */
+#productos .card-body {
+    flex: 1; /* para que los botones se mantengan abajo */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Opcional: agrandar los botones */
+#productos .btn {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin-top: auto; /* fuerza que el botón se quede al fondo de la carta */
+}
