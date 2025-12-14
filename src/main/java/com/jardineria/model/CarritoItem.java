@@ -5,28 +5,26 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "detalle_pedido")
+@Table(name = "carrito_items")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DetallePedido {
+public class CarritoItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int cantidad;
-
-    @Column(name = "precio_unitario")
-    private double precioUnitario;
-
     @ManyToOne
     @JoinColumn(name = "id_producto")
     private Producto producto;
 
+    private int cantidad;
+
     @ManyToOne
-    @JoinColumn(name = "id_pedido")
+    @JoinColumn(name = "id_carrito")
     @JsonBackReference
-    private Pedido pedido;
+    private Carrito carrito;
 }
+
