@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Jardinería</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+<div class="login-container">
+    <h2>Bienvenido a NewGarden</h2>
+    <form id="loginForm">
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Introduce tu email" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" placeholder="Introduce tu contraseña" required>
+        </div>
+        <button type="submit">Iniciar sesión</button>
+        <p id="errorMsg" class="error-msg"></p>
+    </form>
+
+    <hr>
+
+    <a href="usuarios.html" class="btn btn-success mt-3">Registrar nuevo usuario</a>
+</div>
+
+<script src="js/login.js"></script>
+</body>
+</html>
