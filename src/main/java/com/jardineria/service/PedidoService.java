@@ -34,7 +34,7 @@ public class PedidoService {
         Pedido pedido = Pedido.builder()
                 .usuario(carrito.getUsuario())
                 .total(carrito.getTotal())
-                .estado(Pedido.EstadoPedido.PENDIENTE)
+                .estado(Pedido.EstadoPedido.pendiente)
                 .build();
 
         // Convertir items del carrito en items del pedido
@@ -59,4 +59,9 @@ public class PedidoService {
 
         return pedidoGuardado;
     }
+
+    public List<Pedido> obtenerPedidosPorUsuario(Long usuarioId) {
+        return pedidoRepository.findByUsuarioId(usuarioId);
+    }
+
 }

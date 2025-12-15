@@ -28,7 +28,7 @@ public class Pedido {
     private Double total;
 
     @Enumerated(EnumType.STRING)
-    private EstadoPedido estado = EstadoPedido.PENDIENTE;
+    private EstadoPedido estado = EstadoPedido.pendiente;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_pedido")
@@ -43,7 +43,7 @@ public class Pedido {
     }
 
     public enum EstadoPedido {
-        PENDIENTE, ENVIADO, ENTREGADO, CANCELADO
+        pendiente, enviado, entregado, cancelado
     }
 }
 
