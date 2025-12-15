@@ -1,0 +1,46 @@
+/* CSS */
+#dialogMensaje {
+    border: none;
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    width: 320px;
+    max-width: 90%;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Fondo difuminado */
+#dialogMensaje::backdrop {
+    background: rgba(0,0,0,0.4);
+}
+
+/* Contenido */
+.dialog-contenido {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+/* Texto */
+#mensajeTexto {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Botón */
+#cerrarMensaje {
+    background-color: #2d6a4f;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+#cerrarMensaje:hover {
+    background-color: #1b4f37;
+}

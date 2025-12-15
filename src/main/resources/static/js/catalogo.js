@@ -10,7 +10,7 @@ let imagenActual = null;
 ================================ */
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 if (!usuario) {
-    alert("Debes iniciar sesión");
+    mostrarMensaje("Debes iniciar sesión");
     window.location.href = "login.html";
     throw new Error("No hay usuario logueado");
 }
@@ -154,7 +154,7 @@ document.getElementById("btn-submit-producto").addEventListener("click", async (
     const categoriaId = parseInt(document.getElementById("categoria").value);
 
     if (!categoriaId) {
-        alert("Selecciona una categoría");
+        mostrarMensaje("Selecciona una categoría");
         return;
     }
 
@@ -178,11 +178,11 @@ document.getElementById("btn-submit-producto").addEventListener("click", async (
     });
 
     if (!res.ok) {
-        alert("Error: " + await res.text());
+        mostrarMensaje("Error: " + await res.text());
         return;
     }
 
-    alert(productoEditandoId ? "Producto actualizado" : "Producto creado");
+    mostrarMensaje(productoEditandoId ? "Producto actualizado" : "Producto creado");
 
     productoEditandoId = null;
     imagenActual = null;
@@ -201,7 +201,7 @@ async function eliminarProducto(id) {
 
     const res = await fetch(`${API_PRODUCTOS}/${id}`, { method: "DELETE" });
     if (res.ok) {
-        alert("Producto eliminado");
+        mostrarMensaje("Producto eliminado");
         cargarProductos();
     }
 }
@@ -214,7 +214,7 @@ async function añadirAlCarrito(id) {
         method: "POST"
     });
 
-    if (res.ok) alert("Producto añadido al carrito");
+    if (res.ok) mostrarMensaje("Producto añadido al carrito");
 }
 
 /* ===============================
