@@ -3,7 +3,7 @@ const API_CARRITO = "http://localhost:8080/carrito";
 // Obtener usuario del localStorage
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 if (!usuario) {
-    alert("Debes iniciar sesión para acceder al carrito");
+    mostrarMensaje("Debes iniciar sesión para acceder al carrito");
     window.location.href = "login.html";
     throw new Error("No hay usuario logueado");
 }
@@ -15,7 +15,7 @@ btnCerrarSesion.textContent = "Cerrar sesión";
 btnCerrarSesion.className = "btn btn-warning ms-2";
 btnCerrarSesion.addEventListener("click", () => {
     localStorage.removeItem("usuario");
-    alert("Sesión cerrada");
+    mostrarMensaje("Sesión cerrada");
     window.location.href = "login.html";
 });
 document.querySelector(".d-flex").appendChild(btnCerrarSesion);
@@ -28,15 +28,15 @@ document.getElementById("btn-comprar").addEventListener("click", async () => {
         });
 
         if (res.ok) {
-            alert("Compra realizada con éxito!");
+            mostrarMensaje("Compra realizada con éxito!");
             cargarCarrito(); // refresca el carrito vacío
         } else {
             const msg = await res.text();
-            alert("Error al finalizar compra: " + msg);
+            mostrarMensaje("Error al finalizar compra: " + msg);
         }
     } catch (err) {
         console.error(err);
-        alert("Error en la conexión con el servidor");
+        mostrarMensaje("Error en la conexión con el servidor");
     }
 });
 
@@ -62,22 +62,74 @@ function renderCarrito(carrito) {
         return;
     }
 
+    let total = 0;
+
     carrito.items.forEach(item => {
         const tr = document.createElement("tr");
+
+        const subtotal = item.producto.precio * item.cantidad;
+        total += subtotal;
+
         tr.innerHTML = `
-            <td>${item.producto.nombre}</td>
-            <td>${item.cantidad}</td>
-            <td>${item.producto.precio.toFixed(2)} €</td>
-            <td>${(item.producto.precio * item.cantidad).toFixed(2)} €</td>
-            <td>
-                <button onclick="eliminarItem(${item.id})" class="btn btn-danger btn-sm">❌</button>
-            </td>
+        <td>${item.producto.nombre}</td>
+
+        <td>
+            <input 
+                type="number"
+                min="1"
+                value="${item.cantidad}"
+                class="form-control form-control-sm text-center cantidad-input"
+                style="width: 80px;"
+            >
+        </td>
+
+        <td>${item.producto.precio.toFixed(2)} €</td>
+
+        <td class="subtotal">
+            ${subtotal.toFixed(2)} €
+        </td>
+
+        <td>
+            <button onclick="eliminarItem(${item.id})" class="btn btn-danger btn-sm">❌</button>
+        </td>
         `;
+
+        const inputCantidad = tr.querySelector(".cantidad-input");
+        const tdSubtotal = tr.querySelector(".subtotal");
+
+        inputCantidad.addEventListener("change", async () => {
+            let nuevaCantidad = parseInt(inputCantidad.value);
+
+            if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
+                nuevaCantidad = 1;
+                inputCantidad.value = 1;
+            }
+
+            try {
+                const res = await fetch(
+                    `${API_CARRITO}/${usuarioId}/actualizar/${item.id}?cantidad=${nuevaCantidad}`,
+                    { method: "PUT" }
+                );
+
+                if (!res.ok) {
+                    mostrarMensaje("Error al actualizar cantidad");
+                    return;
+                }
+
+                const carritoActualizado = await res.json();
+                renderCarrito(carritoActualizado);
+
+            } catch (err) {
+                console.error(err);
+                mostrarMensaje("Error de conexión");
+            }
+        });
+
         tbody.appendChild(tr);
     });
-
-    document.getElementById("total").textContent = carrito.total.toFixed(2) + " €";
+    document.getElementById("total").textContent = total.toFixed(2) + " €";
 }
+
 
 // ---- Eliminar item ----
 async function eliminarItem(itemId) {

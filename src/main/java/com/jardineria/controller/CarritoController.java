@@ -36,4 +36,14 @@ public class CarritoController {
     ) {
         return carritoService.eliminarItem(usuarioId, itemId);
     }
+
+    @PutMapping("/{usuarioId}/actualizar/{itemId}")
+    public Carrito actualizarCantidad(
+            @PathVariable Long usuarioId,
+            @PathVariable Long itemId,
+            @RequestParam int cantidad
+    ) {
+        return carritoService.actualizarCantidad(usuarioId, itemId, cantidad);
+    }
+
 }

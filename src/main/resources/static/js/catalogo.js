@@ -16,6 +16,21 @@ if (!usuario) {
 }
 const usuarioId = usuario.id;
 
+/* ===============================
+   MOSTRAR BOTÓN CREAR PRODUCTO SI ADMIN
+================================ */
+if (usuario.rol === "admin") {
+    document.getElementById("btn-crear-producto").style.display = "inline-block";
+}
+
+/* ===============================
+   BOTÓN CREAR PRODUCTO
+================================ */
+document.getElementById("btn-crear-producto").addEventListener("click", () => {
+    productoEditandoId = null; // crear nuevo producto
+    imagenActual = null;
+    document.getElementById("form-crear-producto").style.display = "block";
+});
 
 /* ===============================
    BOTÓN VER CARRITO
@@ -24,14 +39,12 @@ document.getElementById("btn-ver-carrito").addEventListener("click", () => {
     window.location.href = "carrito.html";
 });
 
-
 /* ===============================
    BOTÓN VER PEDIDOS
 ================================ */
 document.getElementById("btn-pedidos").addEventListener("click", () => {
     window.location.href = "pedidos.html";
 });
-
 
 /* ===============================
    BOTÓN CERRAR SESIÓN
@@ -49,30 +62,34 @@ document.querySelector(".d-flex").appendChild(btnCerrarSesion);
    CARGAR CATEGORÍAS (FORM)
 ================================ */
 async function cargarCategorias() {
-    const res = await fetch(API_CATEGORIAS);
-    const categorias = await res.json();
-
-    const select = document.getElementById("categoria");
-    select.innerHTML = `<option value="">Selecciona categoría</option>`;
-
-    categorias.forEach(c => {
-        select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
-    });
+    try {
+        const res = await fetch(API_CATEGORIAS);
+        const categorias = await res.json();
+        const select = document.getElementById("categoria");
+        select.innerHTML = `<option value="">Selecciona categoría</option>`;
+        categorias.forEach(c => {
+            select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
+        });
+    } catch (err) {
+        console.error("Error al cargar categorías:", err);
+    }
 }
 
 /* ===============================
    CARGAR CATEGORÍAS (FILTRO)
 ================================ */
 async function cargarCategoriasFiltro() {
-    const res = await fetch(API_CATEGORIAS);
-    const categorias = await res.json();
-
-    const filtro = document.getElementById("filtroCategoria");
-    filtro.innerHTML = `<option value="">Todas</option>`;
-
-    categorias.forEach(c => {
-        filtro.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
-    });
+    try {
+        const res = await fetch(API_CATEGORIAS);
+        const categorias = await res.json();
+        const filtro = document.getElementById("filtroCategoria");
+        filtro.innerHTML = `<option value="">Todas</option>`;
+        categorias.forEach(c => {
+            filtro.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
+        });
+    } catch (err) {
+        console.error("Error al cargar categorías (filtro):", err);
+    }
 }
 
 /* ===============================
@@ -83,8 +100,9 @@ function renderizarProductos(productos) {
     contenedor.innerHTML = "";
 
     productos.forEach(p => {
-        contenedor.innerHTML += `
-        <div class="col-md-4 mb-4">
+        const card = document.createElement("div");
+        card.className = "col-md-4 mb-4";
+        card.innerHTML = `
             <div class="card h-100">
                 <img src="${p.imagen || '/img/default.png'}" class="card-img-top">
                 <div class="card-body d-flex flex-column">
@@ -93,24 +111,22 @@ function renderizarProductos(productos) {
                     <p class="fw-bold">${p.precio.toFixed(2)} €</p>
                     <p class="text-muted">Stock: ${p.stock}</p>
 
-                    <button class="btn btn-primary mt-auto"
-                        onclick="añadirAlCarrito(${p.id})">
+                    <button class="btn btn-primary mt-auto" onclick="añadirAlCarrito(${p.id})">
                         Añadir al carrito
                     </button>
 
                     ${usuario.rol === "admin" ? `
-                        <button class="btn btn-warning mt-2"
-                            onclick="editarProducto(${p.id})">
+                        <button class="btn btn-warning mt-2" onclick="editarProducto(${p.id})">
                             ✏️ Editar
                         </button>
-                        <button class="btn btn-danger mt-2"
-                            onclick="eliminarProducto(${p.id})">
+                        <button class="btn btn-danger mt-2" onclick="eliminarProducto(${p.id})">
                             🗑 Eliminar
                         </button>
                     ` : ""}
                 </div>
             </div>
-        </div>`;
+        `;
+        contenedor.appendChild(card);
     });
 }
 
@@ -118,29 +134,37 @@ function renderizarProductos(productos) {
    CARGAR PRODUCTOS
 ================================ */
 async function cargarProductos() {
-    const res = await fetch(API_PRODUCTOS);
-    const productos = await res.json();
-    renderizarProductos(productos);
+    try {
+        const res = await fetch(API_PRODUCTOS);
+        const productos = await res.json();
+        renderizarProductos(productos);
+    } catch (err) {
+        console.error("Error al cargar productos:", err);
+    }
 }
 
 /* ===============================
    EDITAR PRODUCTO
 ================================ */
 async function editarProducto(id) {
-    const res = await fetch(`${API_PRODUCTOS}/${id}`);
-    const p = await res.json();
+    try {
+        const res = await fetch(`${API_PRODUCTOS}/${id}`);
+        const p = await res.json();
 
-    document.getElementById("nombre").value = p.nombre;
-    document.getElementById("descripcion").value = p.descripcion;
-    document.getElementById("precio").value = p.precio;
-    document.getElementById("stock").value = p.stock;
-    document.getElementById("categoria").value = p.categoria.id;
+        document.getElementById("nombre").value = p.nombre;
+        document.getElementById("descripcion").value = p.descripcion;
+        document.getElementById("precio").value = p.precio;
+        document.getElementById("stock").value = p.stock;
+        document.getElementById("categoria").value = p.categoria.id;
 
-    productoEditandoId = p.id;
-    imagenActual = p.imagen;
+        productoEditandoId = p.id;
+        imagenActual = p.imagen;
 
-    document.getElementById("btn-submit-producto").textContent = "Actualizar Producto";
-    document.getElementById("form-crear-producto").style.display = "block";
+        document.getElementById("btn-submit-producto").textContent = "Actualizar Producto";
+        document.getElementById("form-crear-producto").style.display = "block";
+    } catch (err) {
+        console.error("Error al editar producto:", err);
+    }
 }
 
 /* ===============================
@@ -161,48 +185,61 @@ document.getElementById("btn-submit-producto").addEventListener("click", async (
     const url = productoEditandoId
         ? `${API_PRODUCTOS}/${productoEditandoId}`
         : API_PRODUCTOS;
-
     const method = productoEditandoId ? "PUT" : "POST";
 
-    const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            nombre,
-            descripcion,
-            precio,
-            stock,
-            imagen: imagenActual || "/img/default.png",
-            categoria: { id: categoriaId }
-        })
-    });
+    try {
+        const res = await fetch(url, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nombre,
+                descripcion,
+                precio,
+                stock,
+                imagen: imagenActual || "/img/default.png",
+                categoria: { id: categoriaId }
+            }),
+            credentials: 'include'
+        });
 
-    if (!res.ok) {
-        mostrarMensaje("Error: " + await res.text());
-        return;
+        if (!res.ok) {
+            const msg = await res.text();
+            mostrarMensaje("Error: " + msg);
+            return;
+        }
+
+        mostrarMensaje(productoEditandoId ? "Producto actualizado" : "Producto creado");
+        productoEditandoId = null;
+        imagenActual = null;
+
+        document.getElementById("btn-submit-producto").textContent = "Guardar Producto";
+        document.getElementById("form-crear-producto").style.display = "none";
+
+        cargarProductos();
+    } catch (err) {
+        console.error("Error al guardar producto:", err);
+        mostrarMensaje("Error al guardar producto");
     }
-
-    mostrarMensaje(productoEditandoId ? "Producto actualizado" : "Producto creado");
-
-    productoEditandoId = null;
-    imagenActual = null;
-
-    document.getElementById("btn-submit-producto").textContent = "Guardar Producto";
-    document.getElementById("form-crear-producto").style.display = "none";
-
-    cargarProductos();
 });
 
 /* ===============================
-   ELIMINAR PRODUCTO (ADMIN)
+   ELIMINAR PRODUCTO
 ================================ */
 async function eliminarProducto(id) {
     if (!confirm("¿Eliminar producto?")) return;
 
-    const res = await fetch(`${API_PRODUCTOS}/${id}`, { method: "DELETE" });
-    if (res.ok) {
-        mostrarMensaje("Producto eliminado");
-        cargarProductos();
+    try {
+        const res = await fetch(`${API_PRODUCTOS}/${id}`, { method: "DELETE" });
+        if (res.ok) {
+            mostrarMensaje("Producto eliminado");
+            cargarProductos();
+        } else {
+            const msg = await res.text();
+            mostrarMensaje("Error al eliminar producto: " + msg);
+        }
+    } catch (err) {
+        console.error("Error al eliminar producto:", err);
+        mostrarMensaje("Error al eliminar producto");
     }
 }
 
@@ -210,11 +247,26 @@ async function eliminarProducto(id) {
    AÑADIR AL CARRITO
 ================================ */
 async function añadirAlCarrito(id) {
-    const res = await fetch(`${API_CARRITO}/${usuarioId}/agregar?productoId=${id}&cantidad=1`, {
-        method: "POST"
-    });
+    if (!usuarioId) {
+        mostrarMensaje("Debes iniciar sesión para añadir productos al carrito");
+        return;
+    }
 
-    if (res.ok) mostrarMensaje("Producto añadido al carrito");
+    try {
+        const res = await fetch(`${API_CARRITO}/${usuarioId}/agregar?productoId=${id}&cantidad=1`, {
+            method: "POST",
+            credentials: "include"
+        });
+
+        if (res.ok) {
+            mostrarMensaje("Producto añadido al carrito");
+        } else {
+            mostrarMensaje("No se pudo añadir el producto al carrito");
+        }
+    } catch (err) {
+        console.error("Error al añadir al carrito:", err);
+        mostrarMensaje("Error al añadir producto al carrito");
+    }
 }
 
 /* ===============================
@@ -227,7 +279,8 @@ document.getElementById("filtroCategoria").addEventListener("change", e => {
     } else {
         fetch(`${API_PRODUCTOS}/categoria/${id}`)
             .then(r => r.json())
-            .then(renderizarProductos);
+            .then(renderizarProductos)
+            .catch(err => console.error("Error al filtrar productos:", err));
     }
 });
 

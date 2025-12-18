@@ -101,5 +101,27 @@ public class CarritoService {
         carrito.setTotal(0.0);
         carritoRepository.save(carrito);
     }
+
+    @Transactional
+    public Carrito actualizarCantidad(Long usuarioId, Long itemId, int cantidad) {
+
+        if (cantidad < 1) {
+            throw new RuntimeException("Cantidad inválida");
+        }
+
+        Carrito carrito = obtenerCarrito(usuarioId);
+
+        CarritoItem item = carrito.getItems().stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Item no encontrado"));
+
+        item.setCantidad(cantidad);
+        carritoItemRepository.save(item);
+
+        recalcularTotal(carrito);
+        return carritoRepository.save(carrito);
+    }
+
 }
 
