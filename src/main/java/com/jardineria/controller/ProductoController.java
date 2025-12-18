@@ -34,13 +34,11 @@ public class ProductoController {
     }
 
     @PostMapping
-    public Producto crearProducto(@RequestBody Producto producto, HttpSession session) {
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-        if (usuario == null || !usuario.getRol().equals(Usuario.Rol.admin)) {
-            throw new RuntimeException("No tienes permiso para crear productos");
-        }
+    public Producto crearProducto(@RequestBody Producto producto) {
+        // Ya no se verifica el rol aquí
         return productoService.guardar(producto);
     }
+
 
     @PutMapping("/{id}")
     public Producto actualizarProducto(@PathVariable Long id, @RequestBody Producto producto) {
