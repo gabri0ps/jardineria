@@ -25,35 +25,43 @@ public class LogInController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario userReq, HttpSession session) {
 
-        // Comprobamos credenciales manualmente
-        var usuario = usuarioService.login(userReq.getEmail(), userReq.getPassword());
-        if (usuario.isEmpty()) {
+        // 1️⃣ Comprobamos credenciales (BCrypt)
+        var usuarioOpt = usuarioService.login(userReq.getEmail(), userReq.getPassword());
+        if (usuarioOpt.isEmpty()) {
             return ResponseEntity.status(401).body("Credenciales incorrectas");
         }
 
-        // Creamos autenticación para Spring Security
+        Usuario usuario = usuarioOpt.get();
+
+        // 2️⃣ Creamos autenticación (SIN contraseña)
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
-                        usuario.get().getEmail(),
-                        usuario.get().getPassword(),
-                        List.of(new SimpleGrantedAuthority("ROLE_" + usuario.get().getRol().name().toUpperCase()))
+                        usuario.getEmail(),
+                        null, // ✅ NUNCA poner la contraseña aquí
+                        List.of(new SimpleGrantedAuthority(
+                                "ROLE_" + usuario.getRol().name().toUpperCase()
+                        ))
                 );
 
-        // Subimos al contexto de seguridad
+        // 3️⃣ Subimos al contexto de seguridad
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        // Aseguramos que Spring use la misma sesión
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        // 4️⃣ Guardamos el contexto en sesión
+        session.setAttribute(
+                "SPRING_SECURITY_CONTEXT",
+                SecurityContextHolder.getContext()
+        );
 
-        session.setAttribute("usuario", usuario.get());
+        // 5️⃣ Guardamos usuario para el frontend
+        session.setAttribute("usuario", usuario);
 
-        return ResponseEntity.ok(usuario.get());
+        return ResponseEntity.ok(usuario);
     }
-
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
+        SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Sesión cerrada");
     }
 }

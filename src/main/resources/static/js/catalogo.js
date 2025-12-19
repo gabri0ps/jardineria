@@ -4,9 +4,25 @@ const API_CATEGORIAS = "http://localhost:8080/jardineria/categorias";
 
 let productoEditandoId = null;
 let imagenActual = null;
+let todosProductos = []; // Guardamos todos los productos para filtrar
 
 /* ===============================
-   VERIFICAR USUARIO LOGUEADO
+   Función mostrar mensaje
+================================ */
+function mostrarMensaje(msg) {
+    // Muestra el mensaje en el dialogo o alert
+    const dialog = document.getElementById("dialogMensaje");
+    const texto = document.getElementById("mensajeTexto");
+    texto.textContent = msg;
+    dialog.showModal();
+}
+
+document.getElementById("cerrarMensaje").addEventListener("click", () => {
+    document.getElementById("dialogMensaje").close();
+});
+
+/* ===============================
+   VERIFICAR USUARIO
 ================================ */
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 if (!usuario) {
@@ -17,37 +33,28 @@ if (!usuario) {
 const usuarioId = usuario.id;
 
 /* ===============================
-   MOSTRAR BOTÓN CREAR PRODUCTO SI ADMIN
+   BOTONES ADMIN
 ================================ */
+const btnCrearProducto = document.getElementById("btn-crear-producto");
 if (usuario.rol === "admin") {
-    document.getElementById("btn-crear-producto").style.display = "inline-block";
+    btnCrearProducto.style.display = "inline-block";
 }
-
-/* ===============================
-   BOTÓN CREAR PRODUCTO
-================================ */
-document.getElementById("btn-crear-producto").addEventListener("click", () => {
-    productoEditandoId = null; // crear nuevo producto
+btnCrearProducto.addEventListener("click", () => {
+    productoEditandoId = null;
     imagenActual = null;
+
+    document.getElementById("nombre").value = "";
+    document.getElementById("descripcion").value = "";
+    document.getElementById("precio").value = "";
+    document.getElementById("stock").value = "";
+    document.getElementById("categoria").value = "";
+
+    document.getElementById("btn-submit-producto").textContent = "Guardar Producto";
     document.getElementById("form-crear-producto").style.display = "block";
 });
 
 /* ===============================
-   BOTÓN VER CARRITO
-================================ */
-document.getElementById("btn-ver-carrito").addEventListener("click", () => {
-    window.location.href = "carrito.html";
-});
-
-/* ===============================
-   BOTÓN VER PEDIDOS
-================================ */
-document.getElementById("btn-pedidos").addEventListener("click", () => {
-    window.location.href = "pedidos.html";
-});
-
-/* ===============================
-   BOTÓN CERRAR SESIÓN
+   CERRAR SESIÓN
 ================================ */
 const btnCerrarSesion = document.createElement("button");
 btnCerrarSesion.textContent = "Cerrar sesión";
@@ -59,7 +66,17 @@ btnCerrarSesion.onclick = () => {
 document.querySelector(".d-flex").appendChild(btnCerrarSesion);
 
 /* ===============================
-   CARGAR CATEGORÍAS (FORM)
+   BOTONES CARRITO Y PEDIDOS
+================================ */
+document.getElementById("btn-ver-carrito").addEventListener("click", () => {
+    window.location.href = "carrito.html";
+});
+document.getElementById("btn-pedidos").addEventListener("click", () => {
+    window.location.href = "pedidos.html";
+});
+
+/* ===============================
+   CARGAR CATEGORÍAS
 ================================ */
 async function cargarCategorias() {
     try {
@@ -67,28 +84,34 @@ async function cargarCategorias() {
         const categorias = await res.json();
         const select = document.getElementById("categoria");
         select.innerHTML = `<option value="">Selecciona categoría</option>`;
-        categorias.forEach(c => {
-            select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
-        });
+        categorias.forEach(c => select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`);
     } catch (err) {
         console.error("Error al cargar categorías:", err);
     }
 }
 
-/* ===============================
-   CARGAR CATEGORÍAS (FILTRO)
-================================ */
 async function cargarCategoriasFiltro() {
     try {
         const res = await fetch(API_CATEGORIAS);
         const categorias = await res.json();
         const filtro = document.getElementById("filtroCategoria");
         filtro.innerHTML = `<option value="">Todas</option>`;
-        categorias.forEach(c => {
-            filtro.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
-        });
+        categorias.forEach(c => filtro.innerHTML += `<option value="${c.id}">${c.nombre}</option>`);
     } catch (err) {
         console.error("Error al cargar categorías (filtro):", err);
+    }
+}
+
+/* ===============================
+   CARGAR PRODUCTOS
+================================ */
+async function cargarProductos() {
+    try {
+        const res = await fetch(API_PRODUCTOS);
+        todosProductos = await res.json();
+        renderizarProductos(todosProductos);
+    } catch (err) {
+        console.error("Error al cargar productos:", err);
     }
 }
 
@@ -98,6 +121,11 @@ async function cargarCategoriasFiltro() {
 function renderizarProductos(productos) {
     const contenedor = document.getElementById("productos");
     contenedor.innerHTML = "";
+
+    if (productos.length === 0) {
+        contenedor.innerHTML = `<p class="text-center">No hay productos que coincidan con los filtros</p>`;
+        return;
+    }
 
     productos.forEach(p => {
         const card = document.createElement("div");
@@ -116,31 +144,14 @@ function renderizarProductos(productos) {
                     </button>
 
                     ${usuario.rol === "admin" ? `
-                        <button class="btn btn-warning mt-2" onclick="editarProducto(${p.id})">
-                            ✏️ Editar
-                        </button>
-                        <button class="btn btn-danger mt-2" onclick="eliminarProducto(${p.id})">
-                            🗑 Eliminar
-                        </button>
+                        <button class="btn btn-warning mt-2" onclick="editarProducto(${p.id})">✏️ Editar</button>
+                        <button class="btn btn-danger mt-2" onclick="eliminarProducto(${p.id})">🗑 Eliminar</button>
                     ` : ""}
                 </div>
             </div>
         `;
         contenedor.appendChild(card);
     });
-}
-
-/* ===============================
-   CARGAR PRODUCTOS
-================================ */
-async function cargarProductos() {
-    try {
-        const res = await fetch(API_PRODUCTOS);
-        const productos = await res.json();
-        renderizarProductos(productos);
-    } catch (err) {
-        console.error("Error al cargar productos:", err);
-    }
 }
 
 /* ===============================
@@ -163,7 +174,8 @@ async function editarProducto(id) {
         document.getElementById("btn-submit-producto").textContent = "Actualizar Producto";
         document.getElementById("form-crear-producto").style.display = "block";
     } catch (err) {
-        console.error("Error al editar producto:", err);
+        console.error(err);
+        mostrarMensaje("Error al cargar producto para edición");
     }
 }
 
@@ -182,9 +194,7 @@ document.getElementById("btn-submit-producto").addEventListener("click", async (
         return;
     }
 
-    const url = productoEditandoId
-        ? `${API_PRODUCTOS}/${productoEditandoId}`
-        : API_PRODUCTOS;
+    const url = productoEditandoId ? `${API_PRODUCTOS}/${productoEditandoId}` : API_PRODUCTOS;
     const method = productoEditandoId ? "PUT" : "POST";
 
     try {
@@ -211,13 +221,12 @@ document.getElementById("btn-submit-producto").addEventListener("click", async (
         mostrarMensaje(productoEditandoId ? "Producto actualizado" : "Producto creado");
         productoEditandoId = null;
         imagenActual = null;
-
         document.getElementById("btn-submit-producto").textContent = "Guardar Producto";
         document.getElementById("form-crear-producto").style.display = "none";
 
         cargarProductos();
     } catch (err) {
-        console.error("Error al guardar producto:", err);
+        console.error(err);
         mostrarMensaje("Error al guardar producto");
     }
 });
@@ -234,11 +243,10 @@ async function eliminarProducto(id) {
             mostrarMensaje("Producto eliminado");
             cargarProductos();
         } else {
-            const msg = await res.text();
-            mostrarMensaje("Error al eliminar producto: " + msg);
+            mostrarMensaje("Error al eliminar producto");
         }
     } catch (err) {
-        console.error("Error al eliminar producto:", err);
+        console.error(err);
         mostrarMensaje("Error al eliminar producto");
     }
 }
@@ -248,7 +256,7 @@ async function eliminarProducto(id) {
 ================================ */
 async function añadirAlCarrito(id) {
     if (!usuarioId) {
-        mostrarMensaje("Debes iniciar sesión para añadir productos al carrito");
+        mostrarMensaje("Debes iniciar sesión para añadir productos");
         return;
     }
 
@@ -257,31 +265,44 @@ async function añadirAlCarrito(id) {
             method: "POST",
             credentials: "include"
         });
-
-        if (res.ok) {
-            mostrarMensaje("Producto añadido al carrito");
-        } else {
-            mostrarMensaje("No se pudo añadir el producto al carrito");
-        }
+        if (res.ok) mostrarMensaje("Producto añadido al carrito");
+        else mostrarMensaje("No se pudo añadir el producto al carrito");
     } catch (err) {
-        console.error("Error al añadir al carrito:", err);
+        console.error(err);
         mostrarMensaje("Error al añadir producto al carrito");
     }
 }
 
 /* ===============================
-   FILTRAR POR CATEGORÍA
+   FILTRAR / ORDENAR
 ================================ */
-document.getElementById("filtroCategoria").addEventListener("change", e => {
-    const id = e.target.value;
-    if (!id) {
-        cargarProductos();
-    } else {
-        fetch(`${API_PRODUCTOS}/categoria/${id}`)
-            .then(r => r.json())
-            .then(renderizarProductos)
-            .catch(err => console.error("Error al filtrar productos:", err));
-    }
+document.getElementById("btn-aplicar-filtros").addEventListener("click", () => {
+    let filtrados = [...todosProductos];
+
+    const categoriaId = document.getElementById("filtroCategoria").value;
+    const ordenarPrecio = document.getElementById("ordenarPrecio").value;
+    const ordenarStock = document.getElementById("ordenarStock").value;
+
+    // Filtrar por categoría
+    if (categoriaId) filtrados = filtrados.filter(p => p.categoria.id == categoriaId);
+
+    // Ordenar precio
+    if (ordenarPrecio === "precioAsc") filtrados.sort((a,b) => a.precio - b.precio);
+    if (ordenarPrecio === "precioDesc") filtrados.sort((a,b) => b.precio - a.precio);
+
+    // Ordenar stock
+    if (ordenarStock === "stockAsc") filtrados.sort((a,b) => a.stock - b.stock);
+    if (ordenarStock === "stockDesc") filtrados.sort((a,b) => b.stock - a.stock);
+
+    renderizarProductos(filtrados);
+});
+
+document.getElementById("btn-filtrar-precio").addEventListener("click", () => {
+    const min = parseFloat(document.getElementById("precioMin").value) || 0;
+    const max = parseFloat(document.getElementById("precioMax").value) || Infinity;
+
+    const filtrados = todosProductos.filter(p => p.precio >= min && p.precio <= max);
+    renderizarProductos(filtrados);
 });
 
 /* ===============================

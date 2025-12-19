@@ -10,49 +10,81 @@
 </head>
 <body>
 
-
-
 <div class="container mt-4">
+
+    <!-- Header con botones -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Catálogo de Productos</h1>
         <div>
             <button id="btn-ver-carrito" class="btn btn-primary">🛒 Carrito</button>
             <button id="btn-pedidos" class="btn btn-secondary ms-2">📦 Mis pedidos</button>
-            <button id="btn-crear-producto" class="btn btn-success" style="display:none;">➕ Crear Producto</button>
+            <button id="btn-crear-producto" class="btn btn-success ms-2" style="display:none;">➕ Crear Producto</button>
         </div>
     </div>
 
-    <select id="filtroCategoria">
-        <option value="">Todas</option>
-    </select>
+    <!-- FILTROS PRINCIPALES: categoría, precio, stock -->
+    <div class="row mb-3 g-2">
+        <div class="col-md-3">
+            <select id="filtroCategoria" class="form-select">
+                <option value="">Todas las categorías</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select id="ordenarPrecio" class="form-select">
+                <option value="">Ordenar por precio</option>
+                <option value="precioAsc">Menor a mayor</option>
+                <option value="precioDesc">Mayor a menor</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select id="ordenarStock" class="form-select">
+                <option value="">Ordenar por stock</option>
+                <option value="stockAsc">Menor a mayor</option>
+                <option value="stockDesc">Mayor a menor</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button id="btn-aplicar-filtros" class="btn btn-primary w-100">Aplicar filtros</button>
+        </div>
+    </div>
 
-    <!-- Formulario oculto para crear producto -->
+    <!-- FILTROS DE PRECIO: min y max -->
+    <div class="row mb-3 g-2">
+        <div class="col-md-2">
+            <input type="number" id="precioMin" class="form-control" placeholder="Precio mínimo">
+        </div>
+        <div class="col-md-2">
+            <input type="number" id="precioMax" class="form-control" placeholder="Precio máximo">
+        </div>
+        <div class="col-md-2">
+            <button id="btn-filtrar-precio" class="btn btn-secondary w-100">Filtrar precio</button>
+        </div>
+    </div>
+
+    <!-- Formulario oculto para crear/editar producto -->
     <div id="form-crear-producto" class="mb-4" style="display:none;">
         <input type="text" id="nombre" placeholder="Nombre" class="form-control mb-2">
         <input type="text" id="descripcion" placeholder="Descripción" class="form-control mb-2">
         <input type="number" id="precio" placeholder="Precio" class="form-control mb-2">
         <input type="number" id="stock" placeholder="Stock" class="form-control mb-2">
-
-        <!-- NUEVO: Select para categorías -->
-        <select id="categoria" class="form-control mb-2">
+        <select id="categoria" class="form-select mb-2">
             <option value="">Seleccione una categoría</option>
         </select>
-
         <button id="btn-submit-producto" class="btn btn-success">Guardar Producto</button>
     </div>
 
+    <!-- Contenedor de productos -->
     <div id="productos" class="row g-4"></div>
 </div>
 
 
+<!-- Dialogo para mensajes -->
 <dialog id="dialogMensaje">
     <div class="dialog-contenido">
         <p id="mensajeTexto">Mensaje</p>
         <button id="cerrarMensaje">Cerrar</button>
     </div>
 </dialog>
-
-
 
 <script src="js/catalogo.js"></script>
 <script src="js/dialog.js"></script>
