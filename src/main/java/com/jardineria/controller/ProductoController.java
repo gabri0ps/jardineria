@@ -1,15 +1,14 @@
 package com.jardineria.controller;
 
+import com.jardineria.model.Categoria;
 import com.jardineria.model.Producto;
-import com.jardineria.model.Usuario;
 import com.jardineria.service.ProductoService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/jardineria/productos")
@@ -24,26 +23,49 @@ public class ProductoController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Producto> obtenerProducto(@PathVariable Long id) {
-        return productoService.obtenerPorId(id);
+    public Producto obtenerProducto(@PathVariable Long id) {
+        return productoService.obtenerPorId(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
     }
 
-    @GetMapping("/categoria/{categoriaId}")
-    public List<Producto> listarPorCategoria(@PathVariable Long categoriaId) {
-        return productoService.listarPorCategoria(categoriaId);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Producto crearProducto(
+            @RequestParam String nombre,
+            @RequestParam String descripcion,
+            @RequestParam Double precio,
+            @RequestParam Integer stock,
+            @RequestParam Long categoriaId,
+            @RequestParam(required = false) MultipartFile imagen
+    ) {
+        Producto producto = new Producto();
+        producto.setNombre(nombre);
+        producto.setDescripcion(descripcion);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
+        producto.setCategoria(new Categoria(categoriaId, null, null));
+
+        return productoService.guardar(producto, imagen);
     }
 
-    @PostMapping
-    public Producto crearProducto(@RequestBody Producto producto) {
-        // Ya no se verifica el rol aquí
-        return productoService.guardar(producto);
-    }
-
-
-    @PutMapping("/{id}")
-    public Producto actualizarProducto(@PathVariable Long id, @RequestBody Producto producto) {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Producto actualizarProducto(
+            @PathVariable Long id,
+            @RequestParam String nombre,
+            @RequestParam String descripcion,
+            @RequestParam Double precio,
+            @RequestParam Integer stock,
+            @RequestParam Long categoriaId,
+            @RequestParam(required = false) MultipartFile imagen
+    ) {
+        Producto producto = new Producto();
         producto.setId(id);
-        return productoService.guardar(producto);
+        producto.setNombre(nombre);
+        producto.setDescripcion(descripcion);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
+        producto.setCategoria(new Categoria(categoriaId, null, null));
+
+        return productoService.guardar(producto, imagen);
     }
 
     @DeleteMapping("/{id}")

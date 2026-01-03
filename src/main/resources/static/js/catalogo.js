@@ -183,33 +183,40 @@ async function editarProducto(id) {
    CREAR / ACTUALIZAR PRODUCTO
 ================================ */
 document.getElementById("btn-submit-producto").addEventListener("click", async () => {
-    const nombre = document.getElementById("nombre").value;
-    const descripcion = document.getElementById("descripcion").value;
-    const precio = parseFloat(document.getElementById("precio").value);
-    const stock = parseInt(document.getElementById("stock").value);
-    const categoriaId = parseInt(document.getElementById("categoria").value);
 
+    const categoriaId = document.getElementById("categoria").value;
     if (!categoriaId) {
         mostrarMensaje("Selecciona una categoría");
         return;
     }
 
-    const url = productoEditandoId ? `${API_PRODUCTOS}/${productoEditandoId}` : API_PRODUCTOS;
+    const formData = new FormData();
+    formData.append("nombre", document.getElementById("nombre").value);
+    formData.append("descripcion", document.getElementById("descripcion").value);
+    formData.append("precio", document.getElementById("precio").value);
+    formData.append("stock", document.getElementById("stock").value);
+    formData.append("categoriaId", categoriaId);
+
+    const inputImagen = document.getElementById("imagen");
+    if (inputImagen && inputImagen.files.length > 0) {
+        formData.append("imagen", inputImagen.files[0]);
+    } else if (imagenActual) {
+        // Enviar la ruta actual para que no se pierda
+        formData.append("imagen", imagenActual);
+    }
+
+
+    const url = productoEditandoId
+        ? `${API_PRODUCTOS}/${productoEditandoId}`
+        : API_PRODUCTOS;
+
     const method = productoEditandoId ? "PUT" : "POST";
 
     try {
         const res = await fetch(url, {
             method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                nombre,
-                descripcion,
-                precio,
-                stock,
-                imagen: imagenActual || "/img/default.png",
-                categoria: { id: categoriaId }
-            }),
-            credentials: 'include'
+            body: formData,
+            credentials: "include"
         });
 
         if (!res.ok) {
@@ -219,17 +226,20 @@ document.getElementById("btn-submit-producto").addEventListener("click", async (
         }
 
         mostrarMensaje(productoEditandoId ? "Producto actualizado" : "Producto creado");
+
         productoEditandoId = null;
         imagenActual = null;
         document.getElementById("btn-submit-producto").textContent = "Guardar Producto";
         document.getElementById("form-crear-producto").style.display = "none";
 
         cargarProductos();
+
     } catch (err) {
         console.error(err);
         mostrarMensaje("Error al guardar producto");
     }
 });
+
 
 /* ===============================
    ELIMINAR PRODUCTO

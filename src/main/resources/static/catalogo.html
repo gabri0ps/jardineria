@@ -74,11 +74,14 @@
         <input type="text" id="descripcion" placeholder="Descripción" class="form-control mb-2">
         <input type="number" id="precio" placeholder="Precio" class="form-control mb-2">
         <input type="number" id="stock" placeholder="Stock" class="form-control mb-2">
-        <select id="categoria" class="form-select mb-2">
-            <option value="">Seleccione una categoría</option>
-        </select>
+
+        <select id="categoria" class="form-control mb-2"></select>
+
+        <input type="file" id="imagen" class="form-control mb-2" accept="image/*">
+
         <button id="btn-submit-producto" class="btn btn-success">Guardar Producto</button>
     </div>
+
 
     <!-- Contenedor de productos -->
     <div id="productos" class="row g-4"></div>
