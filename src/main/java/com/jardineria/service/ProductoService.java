@@ -3,6 +3,10 @@ package com.jardineria.service;
 import com.jardineria.model.Producto;
 import com.jardineria.repository.CategoriaRepository;
 import com.jardineria.repository.ProductoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +43,7 @@ public class ProductoService {
     }
 
     public List<Producto> listarPorCategoria(Long categoriaId) {
-        return productoRepository.findByCategoriaId(categoriaId);
+        return productoRepository.findAllByCategoriaId(categoriaId);
     }
 
     // Guardar producto con imagen opcional
@@ -71,6 +75,16 @@ public class ProductoService {
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar imagen", e);
         }
+    }
+
+    public Page<Producto> listarPaginado(int pagina, int tamaño) {
+        Pageable pageable = PageRequest.of(pagina, tamaño);
+        return productoRepository.findAll(pageable);
+    }
+
+    public Page<Producto> listarPorCategoriaPaginado(Long categoriaId, int pagina, int tamaño) {
+        Pageable pageable = PageRequest.of(pagina, tamaño);
+        return productoRepository.findByCategoriaId(categoriaId, pageable);
     }
 
     public void eliminar(Long id) {
