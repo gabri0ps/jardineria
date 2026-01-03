@@ -280,22 +280,29 @@ document.getElementById("btn-aplicar-filtros").addEventListener("click", () => {
     let filtrados = [...todosProductos];
 
     const categoriaId = document.getElementById("filtroCategoria").value;
-    const ordenarPrecio = document.getElementById("ordenarPrecio").value;
-    const ordenarStock = document.getElementById("ordenarStock").value;
+    const criterio = document.getElementById("criterioOrden").value;
+    const direccion = document.getElementById("ordenDireccion").value;
 
     // Filtrar por categoría
-    if (categoriaId) filtrados = filtrados.filter(p => p.categoria.id == categoriaId);
+    if (categoriaId) {
+        filtrados = filtrados.filter(p => p.categoria.id == categoriaId);
+    }
 
-    // Ordenar precio
-    if (ordenarPrecio === "precioAsc") filtrados.sort((a,b) => a.precio - b.precio);
-    if (ordenarPrecio === "precioDesc") filtrados.sort((a,b) => b.precio - a.precio);
+    // Ordenar (solo UN criterio)
+    if (criterio && direccion) {
+        filtrados.sort((a, b) => {
+            const valorA = a[criterio];
+            const valorB = b[criterio];
 
-    // Ordenar stock
-    if (ordenarStock === "stockAsc") filtrados.sort((a,b) => a.stock - b.stock);
-    if (ordenarStock === "stockDesc") filtrados.sort((a,b) => b.stock - a.stock);
+            return direccion === "asc"
+                ? valorA - valorB
+                : valorB - valorA;
+        });
+    }
 
     renderizarProductos(filtrados);
 });
+
 
 document.getElementById("btn-filtrar-precio").addEventListener("click", () => {
     const min = parseFloat(document.getElementById("precioMin").value) || 0;

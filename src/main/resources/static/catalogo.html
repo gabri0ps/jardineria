@@ -23,30 +23,37 @@
     </div>
 
     <!-- FILTROS PRINCIPALES: categoría, precio, stock -->
+    <!-- FILTROS -->
     <div class="row mb-3 g-2">
-        <div class="col-md-3">
+        <div class="col-12 col-md-4">
             <select id="filtroCategoria" class="form-select">
                 <option value="">Todas las categorías</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <select id="ordenarPrecio" class="form-select">
-                <option value="">Ordenar por precio</option>
-                <option value="precioAsc">Menor a mayor</option>
-                <option value="precioDesc">Mayor a menor</option>
+
+        <div class="col-12 col-md-3">
+            <select id="criterioOrden" class="form-select">
+                <option value="">Ordenar por...</option>
+                <option value="precio">Precio</option>
+                <option value="stock">Stock</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <select id="ordenarStock" class="form-select">
-                <option value="">Ordenar por stock</option>
-                <option value="stockAsc">Menor a mayor</option>
-                <option value="stockDesc">Mayor a menor</option>
+
+        <div class="col-12 col-md-3">
+            <select id="ordenDireccion" class="form-select">
+                <option value="">Orden...</option>
+                <option value="asc">Menor a mayor</option>
+                <option value="desc">Mayor a menor</option>
             </select>
         </div>
-        <div class="col-md-2">
-            <button id="btn-aplicar-filtros" class="btn btn-primary w-100">Aplicar filtros</button>
+
+        <div class="col-12 col-md-2">
+            <button id="btn-aplicar-filtros" class="btn btn-primary w-100">
+                Aplicar
+            </button>
         </div>
     </div>
+
 
     <!-- FILTROS DE PRECIO: min y max -->
     <div class="row mb-3 g-2">
