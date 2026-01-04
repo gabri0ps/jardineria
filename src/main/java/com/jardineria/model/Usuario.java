@@ -24,8 +24,13 @@ public class Usuario {
     private String email;
 
     @NotBlank(message = "La contraseña es obligatoria")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
+    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).+$",
+            message = "La contraseña debe contener mayúscula, minúscula, número y un carácter especial"
+    )
     private String password;
+
 
     @NotBlank(message = "La dirección es obligatoria")
     private String direccion;

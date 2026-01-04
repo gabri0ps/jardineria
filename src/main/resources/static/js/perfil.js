@@ -14,9 +14,9 @@ document.getElementById("cerrarMensaje").addEventListener("click", () => {
 });
 
 /* ===============================
-   Cargar usuario
+   Cargar usuario desde localStorage
 ================================ */
-const usuario = JSON.parse(localStorage.getItem("usuario"));
+let usuario = JSON.parse(localStorage.getItem("usuario"));
 
 if (!usuario) {
     window.location.href = "login.html";
@@ -26,9 +26,22 @@ document.getElementById("nombre").value = usuario.nombre;
 document.getElementById("email").value = usuario.email;
 
 /* ===============================
+   Validación de contraseña
+================================ */
+function validarPassword(password) {
+    if (password.length < 8) return "La contraseña debe tener al menos 8 caracteres";
+    if (!/[A-Z]/.test(password)) return "La contraseña debe contener al menos una mayúscula";
+    if (!/[a-z]/.test(password)) return "La contraseña debe contener al menos una minúscula";
+    if (!/\d/.test(password)) return "La contraseña debe contener al menos un número";
+    if (!/[@$!%*?&]/.test(password)) return "La contraseña debe contener al menos un carácter especial (@$!%*?&)";
+    return null; // válida
+}
+
+/* ===============================
    Guardar cambios
 ================================ */
 document.getElementById("btn-guardar").addEventListener("click", async () => {
+
     const nombre = document.getElementById("nombre").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
@@ -38,13 +51,24 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
         return;
     }
 
-    const datos = { id: usuario.id, nombre, email };
-    if (password !== "") datos.password = password;
+    // Validar contraseña si se ha introducido
+    if (password) {
+        const error = validarPassword(password);
+        if (error) {
+            mostrarMensaje(error);
+            return;
+        }
+    }
+
+    // Crear objeto a enviar
+    const datos = { nombre, email };
+    if (password) datos.password = password;
 
     try {
         const res = await fetch(`${API_USUARIOS}/perfil`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify(datos)
         });
 
@@ -60,6 +84,7 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
 
         const usuarioActualizado = await res.json();
         localStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        usuario = usuarioActualizado;
 
         document.getElementById("password").value = "";
         mostrarMensaje("✅ Perfil actualizado correctamente");
