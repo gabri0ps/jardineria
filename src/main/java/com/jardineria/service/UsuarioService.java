@@ -67,5 +67,27 @@ public class UsuarioService implements UserDetailsService {
                 .filter(u -> passwordEncoder.matches(password, u.getPassword()));
     }
 
+    public Usuario actualizarPerfil(Long id, Usuario datos) {
+        Usuario usuarioBD = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // SOLO campos permitidos
+        if (datos.getNombre() != null && !datos.getNombre().isBlank()) {
+            usuarioBD.setNombre(datos.getNombre());
+        }
+
+        if (datos.getEmail() != null && !datos.getEmail().isBlank()) {
+            usuarioBD.setEmail(datos.getEmail());
+        }
+
+        if (datos.getPassword() != null && !datos.getPassword().isBlank()) {
+            usuarioBD.setPassword(passwordEncoder.encode(datos.getPassword()));
+        }
+
+        // NO tocar rol, id, pedidos, etc.
+
+        return usuarioRepository.save(usuarioBD);
+    }
+
 
 }

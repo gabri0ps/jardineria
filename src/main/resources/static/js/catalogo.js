@@ -76,7 +76,7 @@ btnCerrarSesion.onclick = () => {
 document.querySelector(".d-flex").appendChild(btnCerrarSesion);
 
 /* ===============================
-   Botones carrito y pedidos
+   Botones carrito, pedidos y perfil
 ================================ */
 document.getElementById("btn-ver-carrito").addEventListener("click", () => {
     window.location.href = "carrito.html";
@@ -84,6 +84,10 @@ document.getElementById("btn-ver-carrito").addEventListener("click", () => {
 document.getElementById("btn-pedidos").addEventListener("click", () => {
     window.location.href = "pedidos.html";
 });
+document.getElementById("btn-perfil").addEventListener("click", () => {
+    window.location.href = "perfil.html";
+});
+
 
 /* ===============================
    Cargar categorías

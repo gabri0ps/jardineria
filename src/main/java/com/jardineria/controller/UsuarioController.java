@@ -1,13 +1,17 @@
 package com.jardineria.controller;
 
 import com.jardineria.model.Usuario;
+import com.jardineria.repository.UsuarioRepository;
 import com.jardineria.service.UsuarioService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/jardineria/usuarios")
@@ -15,6 +19,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @GetMapping("/usuario/actual")
     public Usuario usuarioActual(Authentication authentication) {
@@ -34,4 +41,33 @@ public class UsuarioController {
         usuarioService.guardarUsuario(usuario); // Lógica para guardar en BD
         return ResponseEntity.ok("Usuario registrado con éxito ✅");
     }
+
+    @PutMapping("/perfil")
+    public Usuario actualizarPerfil(@RequestBody Usuario datos) {
+        // Buscar usuario por ID
+        Usuario usuario = usuarioRepository.findById(datos.getId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Validar email duplicado
+        usuarioRepository.findByEmail(datos.getEmail())
+                .ifPresent(u -> {
+                    if (!u.getId().equals(usuario.getId())) {
+                        throw new ResponseStatusException(
+                                HttpStatus.CONFLICT,
+                                "El email ya está en uso"
+                        );
+                    }
+                });
+
+        usuario.setNombre(datos.getNombre());
+        usuario.setEmail(datos.getEmail());
+
+        if (datos.getPassword() != null && !datos.getPassword().isEmpty()) {
+            usuario.setPassword(datos.getPassword());
+        }
+
+        return usuarioRepository.save(usuario);
+    }
+
+
 }
