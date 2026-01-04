@@ -3,9 +3,7 @@ package com.jardineria.service;
 import com.jardineria.model.Producto;
 import com.jardineria.repository.CategoriaRepository;
 import com.jardineria.repository.ProductoRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,6 +84,39 @@ public class ProductoService {
         Pageable pageable = PageRequest.of(pagina, tamaño);
         return productoRepository.findByCategoriaId(categoriaId, pageable);
     }
+
+    public Page<Producto> listarConFiltros(
+            Long categoriaId,
+            Double precioMin,
+            Double precioMax,
+            String sort,
+            String dir,
+            int page,
+            int size
+    ) {
+        Sort orden = Sort.unsorted();
+        if (sort != null && dir != null) {
+            orden = dir.equalsIgnoreCase("asc")
+                    ? Sort.by(sort).ascending()
+                    : Sort.by(sort).descending();
+        }
+
+        Pageable pageable = PageRequest.of(page, size, orden);
+
+        precioMin = precioMin != null ? precioMin : 0;
+        precioMax = precioMax != null ? precioMax : Double.MAX_VALUE;
+
+        if (categoriaId != null) {
+            return productoRepository.findByCategoriaAndPrecio(
+                    categoriaId, precioMin, precioMax, pageable
+            );
+        }
+
+        return productoRepository.findByPrecioBetween(
+                precioMin, precioMax, pageable
+        );
+    }
+
 
     public void eliminar(Long id) {
         productoRepository.deleteById(id);

@@ -117,13 +117,18 @@ async function cargarCategoriasFiltro() {
 ================================ */
 async function cargarProductosPagina(page = 0) {
     try {
-        const params = new URLSearchParams();
-        params.append("page", page);
-        params.append("size", 6);
+        const params = new URLSearchParams({
+            page,
+            size: 6
+        });
 
         if (filtros.categoriaId) params.append("categoriaId", filtros.categoriaId);
+        if (filtros.precioMin !== 0) params.append("precioMin", filtros.precioMin);
+        if (filtros.precioMax !== Infinity) params.append("precioMax", filtros.precioMax);
+        if (filtros.criterio) params.append("sort", filtros.criterio);
+        if (filtros.direccion) params.append("dir", filtros.direccion);
 
-        const res = await fetch(`${API_PRODUCTOS}/pagina?${params.toString()}`);
+        const res = await fetch(`${API_PRODUCTOS}/pagina?${params}`);
         const data = await res.json();
 
         todosProductos = data.productos;

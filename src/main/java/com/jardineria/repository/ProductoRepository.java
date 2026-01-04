@@ -13,5 +13,14 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     List<Producto> findAllByCategoriaId(Long categoriaId);
 
+    Page<Producto> findByPrecioBetween(
+            Double min, Double max, Pageable pageable
+    );
+
+    Page<Producto> findByCategoriaAndPrecio(
+            Long categoriaId, Double min, Double max, Pageable pageable
+    );
+
+
 
 }

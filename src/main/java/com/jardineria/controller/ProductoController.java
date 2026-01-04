@@ -81,27 +81,28 @@ public class ProductoController {
     }
 
     @GetMapping("/pagina")
-    public Map<String, Object> listarProductosPaginados(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "6") int size,
-            @RequestParam(required = false) Long categoriaId
+    public Map<String, Object> listarPaginado(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) Long categoriaId,
+            @RequestParam(required = false) Double precioMin,
+            @RequestParam(required = false) Double precioMax,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String dir
     ) {
-        Page<Producto> productosPage;
+        Page<Producto> pagina = productoService.listarConFiltros(
+                categoriaId, precioMin, precioMax, sort, dir, page, size
+        );
 
-        if (categoriaId != null) {
-            productosPage = productoService.listarPorCategoriaPaginado(categoriaId, page, size);
-        } else {
-            productosPage = productoService.listarPaginado(page, size);
-        }
+        Map<String, Object> res = new HashMap<>();
+        res.put("productos", pagina.getContent());
+        res.put("paginaActual", pagina.getNumber());
+        res.put("totalPaginas", pagina.getTotalPages());
+        res.put("totalElementos", pagina.getTotalElements());
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("productos", productosPage.getContent());
-        response.put("paginaActual", productosPage.getNumber());
-        response.put("totalPaginas", productosPage.getTotalPages());
-        response.put("totalElementos", productosPage.getTotalElements());
-
-        return response;
+        return res;
     }
+
 
 
 
