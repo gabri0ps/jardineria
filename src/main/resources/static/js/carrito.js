@@ -12,13 +12,16 @@ const usuarioId = usuario.id;
 // ---- Botón cerrar sesión ----
 const btnCerrarSesion = document.createElement("button");
 btnCerrarSesion.textContent = "Cerrar sesión";
-btnCerrarSesion.className = "btn btn-warning ms-2";
+btnCerrarSesion.className = "btn btn-warning";
 btnCerrarSesion.addEventListener("click", () => {
     localStorage.removeItem("usuario");
     mostrarMensaje("Sesión cerrada");
     window.location.href = "login.html";
 });
-document.querySelector(".d-flex").appendChild(btnCerrarSesion);
+
+document.getElementById("contenedor-cerrar-sesion")
+        .appendChild(btnCerrarSesion);
+
 
 // ---- Botón finalizar compra ----
 document.getElementById("btn-comprar").addEventListener("click", async () => {

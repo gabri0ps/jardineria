@@ -103,8 +103,4 @@ public class ProductoController {
         return res;
     }
 
-
-
-
-
 }
