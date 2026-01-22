@@ -1,67 +1,269 @@
+/* ===============================
+   ESTILOS GENERALES
+================================ */
+
 body {
-    background-color: #f5f5f5;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #2d2d2d;
+
+    /* Fondo suave con degradado verde */
+    background: linear-gradient(
+        180deg,
+        #eef5f1 0%,
+        #f7faf9 35%,
+        #f5f7f6 100%
+    );
 }
 
-h1 {
+
+
+/* ===============================
+   HEADER / CABECERA
+================================ */
+
+.catalogo-header {
+    background: #ffffff;
+    padding: 32px 24px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
     text-align: center;
+    margin-bottom: 32px;
+}
+
+.catalogo-header::after {
+    content: "";
+    display: block;
+    width: 120px;
+    height: 4px;
+    background: #2d6a4f;
+    border-radius: 2px;
+    margin: 16px auto 0;
+    opacity: 0.8;
+}
+
+
+
+/* ===== LOGO ===== */
+.logo-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.logo-wrapper img {
+    height: 100px;
+}
+
+/* ===============================
+   BOTONES SUPERIORES
+================================ */
+
+.nav-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.nav-actions .btn {
+    min-width: 150px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+/* Botón principal verde */
+.btn-primary {
+    background-color: #2d6a4f;
+    border-color: #2d6a4f;
+}
+
+.btn-primary:hover {
+    background-color: #40916c;
+    border-color: #40916c;
+}
+
+/* Botón cerrar sesión */
+.btn-warning {
+    background-color: #f4c430;
+    border: none;
+    color: #2d2d2d;
+}
+
+/* ===============================
+   BOTONES ADMIN
+================================ */
+
+.admin-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: 16px 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-actions .btn-success {
+    background-color: #1b4332;
+    border: none;
+}
+
+.admin-actions .btn-success:hover {
+    background-color: #2d6a4f;
+}
+
+.admin-actions .btn-outline-success {
+    border-color: #2d6a4f;
     color: #2d6a4f;
 }
 
-.card {
+.admin-actions .btn-outline-success:hover {
+    background-color: #2d6a4f;
+    color: white;
+}
+
+/* ===============================
+   FILTROS
+================================ */
+
+.form-select,
+.form-control {
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    border: 1px solid #dcdcdc;
+}
+
+.form-select:focus,
+.form-control:focus {
+    border-color: #2d6a4f;
+    box-shadow: 0 0 0 0.15rem rgba(45,106,79,0.25);
+}
+
+/* Botón aplicar filtros */
+#btn-aplicar-filtros {
+    background-color: #2d6a4f;
+    border: none;
+}
+
+#btn-aplicar-filtros:hover {
+    background-color: #40916c;
+}
+
+/* Botón filtrar precio */
+#btn-filtrar-precio {
+    background-color: #6c757d;
+    border: none;
+}
+
+/* ===============================
+   TARJETAS DE PRODUCTO
+================================ */
+
+.card {
+    border-radius: 16px;
+    border: none;
+    background-color: #ffffff;
+    box-shadow: 0 12px 24px rgba(45,106,79,0.12);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
-    transform: scale(1.03);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 36px rgba(45,106,79,0.18);
 }
 
+/* Imagen del producto */
 .card-img-top {
-    height: 200px;
+    height: 250px;
     object-fit: cover;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
 }
 
-
-/* Aumentar la altura mínima de las cartas para dar más espacio a la imagen y el contenido */
+/* Mantener botones abajo */
 #productos .card {
-    min-height: 450px; /* ajusta según prefieras */
+    min-height: 470px;
     display: flex;
     flex-direction: column;
 }
 
-/* Imagen más grande y centrada dentro de la carta */
-#productos .card-img-top {
-    height: 250px; /* un poco más grande que antes */
-    object-fit: cover;
-}
-
-/* Ajuste de los botones y cuerpo de la carta */
 #productos .card-body {
-    flex: 1; /* para que los botones se mantengan abajo */
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* Opcional: agrandar los botones */
-#productos .btn {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    margin-top: auto; /* fuerza que el botón se quede al fondo de la carta */
+/* ===============================
+   TEXTO TARJETAS
+================================ */
+
+.card h5 {
+    font-weight: 600;
+    margin-bottom: 8px;
 }
 
-
-.logo-catalogo {
-    display: flex;
-    align-items: center;
+.card p {
+    color: #555;
+    font-size: 0.95rem;
 }
 
-.logo-catalogo img {
-    height: 120px;
-    width: auto;
+.card .fw-bold {
+    font-size: 1.1rem;
+    color: #1b4332;
 }
 
+/* ===============================
+   BOTONES TARJETA
+================================ */
 
+.card .btn {
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 0.55rem 1rem;
+}
 
+/* Añadir al carrito */
+.card .btn-primary {
+    margin-top: auto;
+}
+
+/* Editar */
+.card .btn-warning {
+    background-color: #f4c430;
+    color: #2d2d2d;
+}
+
+/* Eliminar */
+.card .btn-danger {
+    background-color: #d62828;
+    border: none;
+}
+
+/* ===============================
+   PAGINACIÓN
+================================ */
+
+#paginacion button {
+    min-width: 130px;
+    border-radius: 10px;
+}
+
+/* ===============================
+   FORMULARIOS ADMIN
+================================ */
+
+#form-crear-producto,
+#form-crear-categoria {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ===============================
+   DIALOG MENSAJES
+================================ */
+
+dialog {
+    border-radius: 14px;
+    padding: 16px 20px;
+}

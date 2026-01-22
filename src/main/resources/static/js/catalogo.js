@@ -40,6 +40,11 @@ if (!usuario) {
     window.location.href = "login.html";
     throw new Error("No hay usuario logueado");
 }
+
+if (usuario && usuario.rol === "admin") {
+    document.getElementById("admin-actions").style.display = "flex";
+}
+
 const usuarioId = usuario.id;
 
 /* ===============================
@@ -50,30 +55,41 @@ if (usuario.rol === "admin") {
     btnCrearProducto.style.display = "inline-block";
 }
 btnCrearProducto.addEventListener("click", () => {
-    productoEditandoId = null;
-    imagenActual = null;
+    const formProducto = document.getElementById("form-crear-producto");
+    const formCategoria = document.getElementById("form-crear-categoria");
 
-    document.getElementById("nombre").value = "";
-    document.getElementById("descripcion").value = "";
-    document.getElementById("precio").value = "";
-    document.getElementById("stock").value = "";
-    document.getElementById("categoria").value = "";
+    // Cerrar categoría si está abierta
+    formCategoria.style.display = "none";
 
-    document.getElementById("btn-submit-producto").textContent = "Guardar Producto";
-    document.getElementById("form-crear-producto").style.display = "block";
+    // Resetear formulario producto SOLO al abrir
+    if (formProducto.style.display === "none") {
+        productoEditandoId = null;
+        imagenActual = null;
+
+        document.getElementById("nombre").value = "";
+        document.getElementById("descripcion").value = "";
+        document.getElementById("precio").value = "";
+        document.getElementById("stock").value = "";
+        document.getElementById("categoria").value = "";
+        document.getElementById("imagen").value = "";
+
+        document.getElementById("btn-submit-producto").textContent = "Guardar Producto";
+    }
+
+    // Toggle
+    formProducto.style.display =
+        formProducto.style.display === "none" ? "block" : "none";
 });
+
 
 /* ===============================
    Cerrar sesión
 ================================ */
-const btnCerrarSesion = document.createElement("button");
-btnCerrarSesion.textContent = "Cerrar sesión";
-btnCerrarSesion.className = "btn btn-warning ms-2";
-btnCerrarSesion.onclick = () => {
+document.getElementById("btn-cerrar-sesion").addEventListener("click", () => {
     localStorage.removeItem("usuario");
     window.location.href = "login.html";
-};
-document.querySelector(".d-flex").appendChild(btnCerrarSesion);
+});
+
 
 /* ===============================
    Botones carrito, pedidos y perfil
@@ -328,9 +344,17 @@ if (usuario.rol === "admin") {
 }
 
 btnCrearCategoria.addEventListener("click", () => {
-    formCrearCategoria.style.display =
-        formCrearCategoria.style.display === "none" ? "block" : "none";
+    const formProducto = document.getElementById("form-crear-producto");
+    const formCategoria = document.getElementById("form-crear-categoria");
+
+    // Cerrar producto si está abierto
+    formProducto.style.display = "none";
+
+    // Toggle categoría
+    formCategoria.style.display =
+        formCategoria.style.display === "none" ? "block" : "none";
 });
+
 
 document.getElementById("btn-guardar-categoria").addEventListener("click", async () => {
     const nombre = document.getElementById("nombreCategoria").value.trim();

@@ -10,27 +10,34 @@
 </head>
 <body>
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
+    <div class="container">
 
-    <!-- Header con botones -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="logo-catalogo">
-            <img src="img/newgarden.png" alt="NewGarden">
-        </div>
 
-        <div>
-            <button id="btn-ver-carrito" class="btn btn-primary">🛒 Carrito</button>
-            <button id="btn-pedidos" class="btn btn-secondary ms-2">📦 Mis pedidos</button>
-            <button id="btn-perfil" class="btn btn-info ms-2">👤 Mi perfil</button>
-            <button id="btn-crear-producto" class="btn btn-success ms-2" style="display:none;">➕ Crear Producto</button>
-            <button id="btn-crear-categoria" class="btn btn-outline-success ms-2">
-                ➕ Crear categoría
-            </button>
-        </div>
+    <!-- LOGO -->
+    <div class="logo-wrapper">
+        <img src="img/newgarden.png" alt="NewGarden">
+    </div>
+
+    <!-- BOTONES PRINCIPALES -->
+    <div class="nav-actions">
+        <button id="btn-ver-carrito" class="btn btn-primary">🛒 Carrito</button>
+        <button id="btn-pedidos" class="btn btn-secondary">📦 Mis pedidos</button>
+        <button id="btn-perfil" class="btn btn-info">👤 Mi perfil</button>
+        <button id="btn-cerrar-sesion" class="btn btn-warning">Cerrar sesión</button>
+    </div>
+
+    <!-- BOTONES ADMIN -->
+    <div class="admin-actions mt-3" id="admin-actions" style="display:none;">
+        <button id="btn-crear-producto" class="btn btn-success">
+            ➕ Crear Producto
+        </button>
+        <button id="btn-crear-categoria" class="btn btn-outline-success">
+            ➕ Crear categoría
+        </button>
     </div>
 
     <!-- FILTROS PRINCIPALES: categoría, precio, stock -->
-    <!-- FILTROS -->
     <div class="row mb-3 g-2">
         <div class="col-12 col-md-4">
             <select id="filtroCategoria" class="form-select">
@@ -110,6 +117,7 @@
     <div id="productos" class="row g-4"></div>
 
     <div id="paginacion" class="d-flex justify-content-center mt-4"></div>
+    </div>
 </div>
 
 
