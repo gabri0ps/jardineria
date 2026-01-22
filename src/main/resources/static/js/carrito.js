@@ -19,6 +19,15 @@ btnCerrarSesion.addEventListener("click", () => {
     window.location.href = "login.html";
 });
 
+document.getElementById("btn-volver-catalogo").addEventListener("click", () => {
+    window.location.href = "catalogo.html";
+});
+
+document.getElementById("btn-perfil").addEventListener("click", () => {
+    window.location.href = "perfil.html";
+});
+
+
 document.getElementById("contenedor-cerrar-sesion")
         .appendChild(btnCerrarSesion);
 
@@ -77,13 +86,15 @@ function renderCarrito(carrito) {
         <td>${item.producto.nombre}</td>
 
         <td>
-            <input 
-                type="number"
-                min="1"
-                value="${item.cantidad}"
-                class="form-control form-control-sm text-center cantidad-input"
-                style="width: 80px;"
-            >
+           <input
+               type="number"
+               min="1"
+               max="${item.producto.stock}"
+               value="${item.cantidad}"
+               class="form-control form-control-sm text-center cantidad-input"
+               style="width: 80px;"
+           >
+
         </td>
 
         <td>${item.producto.precio.toFixed(2)} €</td>
@@ -105,8 +116,14 @@ function renderCarrito(carrito) {
 
             if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
                 nuevaCantidad = 1;
-                inputCantidad.value = 1;
             }
+
+            if (nuevaCantidad > item.producto.stock) {
+                nuevaCantidad = item.producto.stock;
+                mostrarMensaje(`Solo hay ${item.producto.stock} unidades disponibles`);
+            }
+
+            inputCantidad.value = nuevaCantidad;
 
             try {
                 const res = await fetch(

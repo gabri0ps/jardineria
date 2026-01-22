@@ -17,10 +17,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
             Double min, Double max, Pageable pageable
     );
 
-    Page<Producto> findByCategoriaAndPrecio(
+    Page<Producto> findByCategoriaIdAndPrecioBetween(
             Long categoriaId, Double min, Double max, Pageable pageable
     );
-
-
-
 }
+

@@ -64,15 +64,16 @@ public class ProductoController {
             @RequestParam Long categoriaId,
             @RequestParam(required = false) MultipartFile imagen
     ) {
-        Producto producto = new Producto();
-        producto.setId(id);
-        producto.setNombre(nombre);
-        producto.setDescripcion(descripcion);
-        producto.setPrecio(precio);
-        producto.setStock(stock);
-        producto.setCategoria(new Categoria(categoriaId, null, null));
+        Producto productoExistente = productoService.obtenerPorId(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        return productoService.guardar(producto, imagen);
+        productoExistente.setNombre(nombre);
+        productoExistente.setDescripcion(descripcion);
+        productoExistente.setPrecio(precio);
+        productoExistente.setStock(stock);
+        productoExistente.setCategoria(new Categoria(categoriaId, null, null));
+
+        return productoService.guardar(productoExistente, imagen);
     }
 
     @DeleteMapping("/{id}")

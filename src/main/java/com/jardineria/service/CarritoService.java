@@ -44,24 +44,40 @@ public class CarritoService {
 
     public Carrito agregarProducto(Long usuarioId, Long productoId, int cantidad) {
         Carrito carrito = obtenerCarrito(usuarioId);
+
         Producto producto = productoRepository.findById(productoId)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        // Buscar si ya existe ese producto en el carrito
+        if (producto.getStock() == 0) {
+            throw new RuntimeException("Producto sin stock");
+        }
+
+        if (cantidad > producto.getStock()) {
+            throw new RuntimeException("No hay stock suficiente");
+        }
+
         Optional<CarritoItem> existente = carrito.getItems().stream()
                 .filter(i -> i.getProducto().getId().equals(productoId))
                 .findFirst();
 
         if (existente.isPresent()) {
             CarritoItem item = existente.get();
-            item.setCantidad(item.getCantidad() + cantidad);
+            int nuevaCantidad = item.getCantidad() + cantidad;
+
+            if (nuevaCantidad > producto.getStock()) {
+                throw new RuntimeException("No hay stock suficiente");
+            }
+
+            item.setCantidad(nuevaCantidad);
             carritoItemRepository.save(item);
+
         } else {
             CarritoItem nuevo = CarritoItem.builder()
                     .producto(producto)
                     .cantidad(cantidad)
                     .carrito(carrito)
                     .build();
+
             carritoItemRepository.save(nuevo);
             carrito.getItems().add(nuevo);
         }
@@ -69,6 +85,7 @@ public class CarritoService {
         recalcularTotal(carrito);
         return carritoRepository.save(carrito);
     }
+
 
     public Carrito eliminarItem(Long usuarioId, Long itemId) {
         Carrito carrito = obtenerCarrito(usuarioId);
@@ -116,12 +133,19 @@ public class CarritoService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Item no encontrado"));
 
+        Producto producto = item.getProducto();
+
+        if (cantidad > producto.getStock()) {
+            throw new RuntimeException("No hay stock suficiente");
+        }
+
         item.setCantidad(cantidad);
         carritoItemRepository.save(item);
 
         recalcularTotal(carrito);
         return carritoRepository.save(carrito);
     }
+
 
 }
 

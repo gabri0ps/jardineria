@@ -9,8 +9,17 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Mapea /img/** a la carpeta uploads/ en la raíz del proyecto
+
         registry.addResourceHandler("/img/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations(
+                        "classpath:/static/img/",
+                        "file:uploads/"
+                );
+
+        registry.addResourceHandler("/css/**")
+                .addResourceLocations("classpath:/static/css/");
+
+        registry.addResourceHandler("/js/**")
+                .addResourceLocations("classpath:/static/js/");
     }
 }

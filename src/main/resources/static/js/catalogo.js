@@ -170,9 +170,13 @@ function renderizarProductos(productos) {
                     <p class="fw-bold">${p.precio.toFixed(2)} €</p>
                     <p class="text-muted">Stock: ${p.stock}</p>
 
-                    <button class="btn btn-primary mt-auto" onclick="añadirAlCarrito(${p.id})">
-                        Añadir al carrito
+                    <button
+                        class="btn btn-primary mt-auto"
+                        ${p.stock === 0 ? "disabled" : ""}
+                        onclick="añadirAlCarrito(${p.id}, ${p.stock})">
+                        ${p.stock === 0 ? "Sin stock" : "Añadir al carrito"}
                     </button>
+
 
                     ${usuario.rol === "admin" ? `
                         <button class="btn btn-warning mt-2" onclick="editarProducto(${p.id})">✏️ Editar</button>
@@ -220,6 +224,9 @@ async function editarProducto(id) {
         document.getElementById("precio").value = p.precio;
         document.getElementById("stock").value = p.stock;
         document.getElementById("categoria").value = p.categoria.id;
+
+         // LIMPIAR INPUT FILE
+         document.getElementById("imagen").value = "";
 
         productoEditandoId = p.id;
         imagenActual = p.imagen;
@@ -309,26 +316,98 @@ async function eliminarProducto(id) {
 }
 
 /* ===============================
+   Crear categoría
+================================ */
+const btnCrearCategoria = document.getElementById("btn-crear-categoria");
+const formCrearCategoria = document.getElementById("form-crear-categoria");
+
+if (usuario.rol === "admin") {
+    btnCrearCategoria.style.display = "inline-block";
+} else {
+    btnCrearCategoria.style.display = "none";
+}
+
+btnCrearCategoria.addEventListener("click", () => {
+    formCrearCategoria.style.display =
+        formCrearCategoria.style.display === "none" ? "block" : "none";
+});
+
+document.getElementById("btn-guardar-categoria").addEventListener("click", async () => {
+    const nombre = document.getElementById("nombreCategoria").value.trim();
+
+    if (!nombre) {
+        mostrarMensaje("El nombre de la categoría es obligatorio");
+        return;
+    }
+
+    try {
+        const res = await fetch(API_CATEGORIAS, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ nombre })
+        });
+
+        if (!res.ok) {
+            const msg = await res.text();
+            mostrarMensaje("Error: " + msg);
+            return;
+        }
+
+        mostrarMensaje("Categoría creada correctamente");
+
+        document.getElementById("nombreCategoria").value = "";
+        formCrearCategoria.style.display = "none";
+
+        // 🔄 Recargar categorías en selects
+        cargarCategorias();
+        cargarCategoriasFiltro();
+
+    } catch (err) {
+        console.error(err);
+        mostrarMensaje("Error al crear categoría");
+    }
+});
+
+
+
+/* ===============================
    Añadir al carrito
 ================================ */
-async function añadirAlCarrito(id) {
+async function añadirAlCarrito(id, stockDisponible) {
     if (!usuarioId) {
         mostrarMensaje("Debes iniciar sesión para añadir productos");
         return;
     }
 
+    if (stockDisponible === 0) {
+        mostrarMensaje("No hay stock disponible de este producto");
+        return;
+    }
+
     try {
-        const res = await fetch(`${API_CARRITO}/${usuarioId}/agregar?productoId=${id}&cantidad=1`, {
-            method: "POST",
-            credentials: "include"
-        });
-        if (res.ok) mostrarMensaje("Producto añadido al carrito");
-        else mostrarMensaje("No se pudo añadir el producto al carrito");
+        const res = await fetch(
+            `${API_CARRITO}/${usuarioId}/agregar?productoId=${id}&cantidad=1`,
+            {
+                method: "POST",
+                credentials: "include"
+            }
+        );
+
+        if (!res.ok) {
+            const msg = await res.text();
+            mostrarMensaje(msg || "No se pudo añadir el producto al carrito");
+            return;
+        }
+
+        mostrarMensaje("Producto añadido al carrito");
     } catch (err) {
         console.error(err);
         mostrarMensaje("Error al añadir producto al carrito");
     }
 }
+
 
 /* ===============================
    Filtrar / ordenar

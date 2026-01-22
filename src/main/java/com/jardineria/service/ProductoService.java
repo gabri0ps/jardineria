@@ -46,22 +46,21 @@ public class ProductoService {
 
     // Guardar producto con imagen opcional
     public Producto guardar(Producto producto, MultipartFile imagen) {
-        // Validar categoría
+
         producto.setCategoria(
                 categoriaRepository.findById(producto.getCategoria().getId())
                         .orElseThrow(() -> new RuntimeException("Categoría no válida"))
         );
 
-        // Mantener imagen existente si no se sube una nueva
+        // SOLO cambiar imagen si se sube una nueva
         if (imagen != null && !imagen.isEmpty()) {
             producto.setImagen(guardarImagen(imagen));
-        } else if (producto.getImagen() == null || producto.getImagen().isEmpty()) {
-            // Si no hay imagen y tampoco hay imagen existente, usar default
-            producto.setImagen("/img/default.png");
         }
 
+        // NO tocar la imagen si ya existe
         return productoRepository.save(producto);
     }
+
 
 
     private String guardarImagen(MultipartFile imagen) {
@@ -107,7 +106,7 @@ public class ProductoService {
         precioMax = precioMax != null ? precioMax : Double.MAX_VALUE;
 
         if (categoriaId != null) {
-            return productoRepository.findByCategoriaAndPrecio(
+            return productoRepository.findByCategoriaIdAndPrecioBetween(
                     categoriaId, precioMin, precioMax, pageable
             );
         }

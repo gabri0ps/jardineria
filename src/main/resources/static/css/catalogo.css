@@ -51,3 +51,17 @@ h1 {
     padding: 0.5rem 1rem;
     margin-top: auto; /* fuerza que el botón se quede al fondo de la carta */
 }
+
+
+.logo-catalogo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-catalogo img {
+    height: 120px;
+    width: auto;
+}
+
+
+

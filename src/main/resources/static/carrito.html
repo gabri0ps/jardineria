@@ -11,10 +11,26 @@
 
 <header class="container mt-4 mb-4">
     <div class="d-flex justify-content-between align-items-center">
-        <h1>🛒 Tu Carrito</h1>
-        <div id="contenedor-cerrar-sesion"></div>
+
+        <!-- Título -->
+        <h1 class="mb-0">🛒 Tu Carrito</h1>
+
+        <!-- Botones -->
+        <div class="d-flex gap-2 align-items-center">
+            <button id="btn-volver-catalogo" class="btn btn-secondary">
+                ⬅ Volver al catálogo
+            </button>
+
+            <button id="btn-perfil" class="btn btn-info">
+                👤 Modificar perfil
+            </button>
+
+            <div id="contenedor-cerrar-sesion"></div>
+        </div>
+
     </div>
 </header>
+
 
 
 <section class="container" id="carrito-container">
@@ -39,6 +55,8 @@
 
     <button id="btn-comprar" class="btn btn-success mt-3">Finalizar compra</button>
 </section>
+
+
 
 <dialog id="dialogMensaje">
     <div class="dialog-contenido">
