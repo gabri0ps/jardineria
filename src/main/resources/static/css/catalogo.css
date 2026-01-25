@@ -1,12 +1,11 @@
-/* ===============================
-   ESTILOS GENERALES
-================================ */
+/* ==================================================
+   ESTILOS BASE (MOBILE FIRST)
+   Se aplican a móviles por defecto
+================================================== */
 
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: #2d2d2d;
-
-    /* Fondo suave con degradado verde */
     background: linear-gradient(
         180deg,
         #eef5f1 0%,
@@ -15,64 +14,60 @@ body {
     );
 }
 
+/* ==================================================
+   LOGO (MÓVIL)
+================================================== */
 
-
-/* ===============================
-   HEADER / CABECERA
-================================ */
-
-.catalogo-header {
-    background: #ffffff;
-    padding: 32px 24px;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-    text-align: center;
-    margin-bottom: 32px;
-}
-
-.catalogo-header::after {
-    content: "";
-    display: block;
-    width: 120px;
-    height: 4px;
-    background: #2d6a4f;
-    border-radius: 2px;
-    margin: 16px auto 0;
-    opacity: 0.8;
-}
-
-
-
-/* ===== LOGO ===== */
 .logo-wrapper {
     display: flex;
     justify-content: center;
-    margin-bottom: 14px;
+    margin-bottom: 24px;
 }
 
 .logo-wrapper img {
-    height: 100px;
+    height: 80px;
 }
 
-/* ===============================
-   BOTONES SUPERIORES
-================================ */
+/* ==================================================
+   BOTONES SUPERIORES (MÓVIL)
+================================================== */
 
 .nav-actions {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
 }
 
 .nav-actions .btn {
-    min-width: 150px;
+    width: 100%;
     border-radius: 10px;
     font-weight: 500;
+    padding: 0.9rem;
 }
 
-/* Botón principal verde */
+/* ==================================================
+   BOTONES ADMIN (MÓVIL)
+================================================== */
+
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px 0;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-actions .btn {
+    width: 100%;
+    padding: 0.85rem;
+}
+
+/* ==================================================
+   BOTONES GENERALES (COMÚN)
+================================================== */
+
 .btn-primary {
     background-color: #2d6a4f;
     border-color: #2d6a4f;
@@ -83,24 +78,10 @@ body {
     border-color: #40916c;
 }
 
-/* Botón cerrar sesión */
 .btn-warning {
     background-color: #f4c430;
     border: none;
     color: #2d2d2d;
-}
-
-/* ===============================
-   BOTONES ADMIN
-================================ */
-
-.admin-actions {
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-    margin: 16px 0;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #e0e0e0;
 }
 
 .admin-actions .btn-success {
@@ -122,14 +103,16 @@ body {
     color: white;
 }
 
-/* ===============================
-   FILTROS
-================================ */
+/* ==================================================
+   FILTROS (MÓVIL)
+================================================== */
 
 .form-select,
 .form-control {
     border-radius: 10px;
     border: 1px solid #dcdcdc;
+    padding: 0.8rem;
+    margin-bottom: 10px;
 }
 
 .form-select:focus,
@@ -138,50 +121,33 @@ body {
     box-shadow: 0 0 0 0.15rem rgba(45,106,79,0.25);
 }
 
-/* Botón aplicar filtros */
-#btn-aplicar-filtros {
-    background-color: #2d6a4f;
-    border: none;
-}
-
-#btn-aplicar-filtros:hover {
-    background-color: #40916c;
-}
-
-/* Botón filtrar precio */
+#btn-aplicar-filtros,
 #btn-filtrar-precio {
-    background-color: #6c757d;
-    border: none;
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 1rem;
 }
 
-/* ===============================
-   TARJETAS DE PRODUCTO
-================================ */
+/* ==================================================
+   TARJETAS DE PRODUCTO (MÓVIL)
+================================================== */
 
 .card {
     border-radius: 16px;
     border: none;
     background-color: #ffffff;
     box-shadow: 0 12px 24px rgba(45,106,79,0.12);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 36px rgba(45,106,79,0.18);
-}
-
-/* Imagen del producto */
 .card-img-top {
-    height: 250px;
+    height: 180px;
     object-fit: cover;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
 }
 
-/* Mantener botones abajo */
 #productos .card {
-    min-height: 470px;
+    min-height: auto;
     display: flex;
     flex-direction: column;
 }
@@ -192,9 +158,9 @@ body {
     flex-direction: column;
 }
 
-/* ===============================
-   TEXTO TARJETAS
-================================ */
+/* ==================================================
+   TEXTO TARJETAS (COMÚN)
+================================================== */
 
 .card h5 {
     font-weight: 600;
@@ -211,45 +177,48 @@ body {
     color: #1b4332;
 }
 
-/* ===============================
-   BOTONES TARJETA
-================================ */
+/* ==================================================
+   BOTONES TARJETA (MÓVIL)
+================================================== */
 
 .card .btn {
     border-radius: 10px;
     font-weight: 500;
-    padding: 0.55rem 1rem;
+    padding: 0.6rem;
 }
 
-/* Añadir al carrito */
 .card .btn-primary {
     margin-top: auto;
 }
 
-/* Editar */
 .card .btn-warning {
     background-color: #f4c430;
     color: #2d2d2d;
 }
 
-/* Eliminar */
 .card .btn-danger {
     background-color: #d62828;
     border: none;
 }
 
-/* ===============================
-   PAGINACIÓN
-================================ */
+/* ==================================================
+   PAGINACIÓN (MÓVIL)
+================================================== */
+
+#paginacion {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
 #paginacion button {
-    min-width: 130px;
+    width: 100%;
     border-radius: 10px;
 }
 
-/* ===============================
-   FORMULARIOS ADMIN
-================================ */
+/* ==================================================
+   FORMULARIOS ADMIN (COMÚN)
+================================================== */
 
 #form-crear-producto,
 #form-crear-categoria {
@@ -259,11 +228,118 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* ===============================
-   DIALOG MENSAJES
-================================ */
+/* ==================================================
+   DIALOG MENSAJES (COMÚN)
+================================================== */
 
 dialog {
     border-radius: 14px;
     padding: 16px 20px;
 }
+
+/* ==================================================
+   ESTILOS PARA PC / TABLET
+   Se aplican desde 768px en adelante
+================================================== */
+
+@media (min-width: 768px) {
+
+    /* Logo */
+    .logo-wrapper img {
+        height: 100px;
+    }
+
+    /* Botones superiores */
+    .nav-actions {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .nav-actions .btn {
+        width: auto;
+        min-width: 150px;
+        padding: 0.6rem 1rem;
+    }
+
+    /* Botones admin */
+    .admin-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .admin-actions .btn {
+        width: auto;
+    }
+
+    /* Filtros */
+    .form-select,
+    .form-control {
+        margin-bottom: 0;
+        padding: 0.5rem;
+    }
+
+    #btn-aplicar-filtros,
+    #btn-filtrar-precio {
+        width: auto;
+        padding: 0.5rem 1rem;
+    }
+
+    /* Cards */
+    .card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 36px rgba(45,106,79,0.18);
+    }
+
+    .card-img-top {
+        height: 250px;
+    }
+
+    #productos .card {
+        min-height: 470px;
+    }
+
+    /* Paginación */
+    #paginacion {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    #paginacion button {
+        width: auto;
+        min-width: 130px;
+    }
+}
+
+/* ===============================
+   MENÚ Y FILTROS MÓVIL
+================================ */
+
+@media (max-width: 576px) {
+
+    /* Ocultar bloques al cargar */
+    .nav-actions,
+    .admin-actions,
+    .row.mb-3,
+    #form-crear-producto,
+    #form-crear-categoria {
+        display: none;
+    }
+
+    /* Mostrar menú */
+    .menu-abierto .nav-actions,
+    .menu-abierto .admin-actions {
+        display: flex;
+    }
+
+    /* Mostrar filtros */
+    .filtros-abiertos .row.mb-3 {
+        display: flex;
+    }
+}
+
+

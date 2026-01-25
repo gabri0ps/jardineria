@@ -451,6 +451,30 @@ document.getElementById("btn-filtrar-precio").addEventListener("click", () => {
     cargarProductosPagina(0);
 });
 
+
+/* ===============================
+   Menú y filtros móvil
+================================ */
+
+const btnMenuMovil = document.getElementById("btn-menu-movil");
+const btnFiltrosMovil = document.getElementById("btn-filtros-movil");
+
+if (btnMenuMovil) {
+    btnMenuMovil.addEventListener("click", () => {
+        document.body.classList.toggle("menu-abierto");
+        document.body.classList.remove("filtros-abiertos");
+    });
+}
+
+if (btnFiltrosMovil) {
+    btnFiltrosMovil.addEventListener("click", () => {
+        document.body.classList.toggle("filtros-abiertos");
+        document.body.classList.remove("menu-abierto");
+    });
+}
+
+
+
 /* ===============================
    Inicializar
 ================================ */
