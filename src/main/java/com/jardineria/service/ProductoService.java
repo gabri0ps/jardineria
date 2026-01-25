@@ -24,7 +24,8 @@ public class ProductoService {
     private final CategoriaRepository categoriaRepository;
 
     // Carpeta donde se guardarán las imágenes
-    private static final String IMG_DIR = "uploads/";
+    private static final String IMG_DIR = System.getProperty("user.dir") + "/uploads/";
+
 
 
     public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
@@ -54,12 +55,39 @@ public class ProductoService {
 
         // SOLO cambiar imagen si se sube una nueva
         if (imagen != null && !imagen.isEmpty()) {
+
+            // borrar imagen antigua si existe
+            if (producto.getImagen() != null) {
+                borrarImagen(producto.getImagen());
+            }
+
             producto.setImagen(guardarImagen(imagen));
         }
+
 
         // NO tocar la imagen si ya existe
         return productoRepository.save(producto);
     }
+
+    private void borrarImagen(String rutaImagen) {
+        try {
+            String nombreArchivo = rutaImagen.replace("/img/", "");
+
+            // solo borrar si es imagen subida (UUID_)
+            if (!nombreArchivo.contains("-")) {
+                return;
+            }
+
+            Path ruta = Paths.get(IMG_DIR + nombreArchivo);
+            Files.deleteIfExists(ruta);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error al borrar imagen", e);
+        }
+    }
+
+
+
 
 
 
@@ -118,6 +146,16 @@ public class ProductoService {
 
 
     public void eliminar(Long id) {
-        productoRepository.deleteById(id);
+
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        // borrar imagen asociada
+        if (producto.getImagen() != null) {
+            borrarImagen(producto.getImagen());
+        }
+
+        productoRepository.delete(producto);
     }
+
 }

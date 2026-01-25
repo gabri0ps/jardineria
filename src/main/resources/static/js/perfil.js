@@ -61,8 +61,13 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
     }
 
     // Crear objeto a enviar
-    const datos = { nombre, email };
+    const datos = {
+        id: usuario.id,
+        nombre,
+        email
+    };
     if (password) datos.password = password;
+
 
     try {
         const res = await fetch(`${API_USUARIOS}/perfil`, {
