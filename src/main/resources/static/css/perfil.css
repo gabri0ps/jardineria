@@ -1,44 +1,32 @@
 /* ===============================
-   FONDO
+   GENERAL
 ================================ */
 
 body {
-    margin: 0;
-    height: 100vh;
+    background-color: #f5f7f5;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #b7f28a, #6fcf97);
-}
-
-
-/* Wrapper centrado */
-.login-wrapper {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* ===============================
-   CARD LOGIN
+   CARD PERFIL
 ================================ */
 
-.login-card {
+.perfil-card {
     background: #ffffff;
-    padding: 36px 32px;
-    border-radius: 20px;
+    padding: 28px 32px;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     width: 100%;
-    max-width: 380px;
-    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
-    text-align: center;
+    max-width: 420px;
 }
 
 /* Logo */
-.login-logo {
-    height: 80px;
+.perfil-logo {
+    height: 70px;
 }
 
 /* Título */
-.login-card h2 {
+.perfil-card h2 {
     color: #2f6b3f;
     font-weight: 600;
 }
@@ -51,28 +39,22 @@ body {
 
 .form-control:focus {
     border-color: #2f6b3f;
-    box-shadow: 0 0 0 0.15rem rgba(47, 107, 63, 0.25);
+    box-shadow: 0 0 0 0.15rem rgba(47, 107, 63, 0.2);
 }
 
-/* Botón */
-.btn-success {
+/* Botón guardar */
+#btn-guardar {
     background-color: #2f6b3f;
     border: none;
     padding: 12px;
-    font-size: 1rem;
+    font-weight: 500;
 }
 
-.btn-success:hover {
+#btn-guardar:hover {
     background-color: #245430;
 }
 
-/* Error */
-.error-msg {
-    color: #d32f2f;
-    font-size: 0.9rem;
-}
-
-/* Link registro */
+/* Volver */
 .btn-link {
     color: #2f6b3f;
     text-decoration: none;
@@ -81,6 +63,3 @@ body {
 .btn-link:hover {
     text-decoration: underline;
 }
-
-
-

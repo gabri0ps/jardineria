@@ -1,4 +1,5 @@
-const API_USUARIOS = "/jardineria/usuarios/registro"; // ✅ ruta correcta
+const API_USUARIOS = "/jardineria/usuarios/registro";
+
 
 document.getElementById("formUsuario").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -6,10 +7,10 @@ document.getElementById("formUsuario").addEventListener("submit", async (e) => {
   const usuario = {
     nombre: document.getElementById("nombre").value,
     email: document.getElementById("email").value,
-    password: document.getElementById("password").value,  // si agregaste password
+    password: document.getElementById("password").value,
     direccion: document.getElementById("direccion")?.value,
     telefono: document.getElementById("telefono")?.value,
-    rol: "cliente" // coincide con tu enum Rol en mayúsculas
+    rol: "cliente"
   };
 
   try {
@@ -25,10 +26,10 @@ document.getElementById("formUsuario").addEventListener("submit", async (e) => {
     }
 
     const data = await res.text();
-    alert(data);
+    mostrarMensaje(data);
     e.target.reset();
 
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    mostrarMensaje("Error: " + err.message);
   }
 });

@@ -1,39 +1,96 @@
 body {
-  background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
-  font-family: 'Poppins', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #b7f28a, #6fcf97);
+    min-height: 100vh;
 }
 
-.card {
-  border: none;
-  background-color: #ffffffee;
+.register-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.card h2 {
-  letter-spacing: 1px;
+.register-card {
+    background: #ffffff;
+    padding: 42px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+    animation: aparecer 0.6s ease;
+}
+
+/* Logo */
+.logo {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.logo img {
+    height: 70px;
+}
+
+/* Título */
+.register-card h2 {
+    text-align: center;
+    color: #2f6b3f;
+    font-weight: 700;
+    margin-bottom: 28px;
+}
+
+/* Inputs */
+label {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: #444;
 }
 
 .form-control {
-  border: 2px solid #e3f2e1;
-  transition: border-color 0.3s, box-shadow 0.3s;
+    border-radius: 10px;
+    padding: 10px 14px;
+    border: 1px solid #cfe8d5;
 }
 
 .form-control:focus {
-  border-color: #52b788;
-  box-shadow: 0 0 6px rgba(82, 183, 136, 0.5);
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
 }
 
-.btn-success {
-  background-color: #52b788;
-  border: none;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: background-color 0.3s;
+/* Botón principal */
+.btn-primary {
+    background-color: #2f6b3f;
+    border: none;
+    padding: 12px;
+    font-weight: 600;
+    border-radius: 12px;
 }
 
-.btn-success:hover {
-  background-color: #40916c;
+.btn-primary:hover {
+    background-color: #255531;
+    transform: translateY(-1px);
+}
+
+/* Link */
+.btn-link {
+    color: #2f6b3f;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+/* Animación */
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
