@@ -162,5 +162,17 @@ async function eliminarItem(itemId) {
     }
 }
 
+/* ===============================
+   Menú móvil carrito
+================================ */
+const btnMenuCarrito = document.getElementById("btn-menu-carrito");
+
+if (btnMenuCarrito) {
+    btnMenuCarrito.addEventListener("click", () => {
+        document.body.classList.toggle("menu-abierto");
+    });
+}
+
+
 // ---- Inicializar ----
 cargarCarrito();
