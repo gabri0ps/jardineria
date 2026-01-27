@@ -25,6 +25,11 @@ if (!usuario) {
 document.getElementById("nombre").value = usuario.nombre;
 document.getElementById("email").value = usuario.email;
 
+// 👇 GUARDAMOS VALORES ORIGINALES
+let emailOriginal = usuario.email;
+let nombreOriginal = usuario.nombre;
+
+
 /* ===============================
    Validación de contraseña
 ================================ */
@@ -79,8 +84,13 @@ document.getElementById("btn-guardar").addEventListener("click", async () => {
 
         if (res.status === 409) {
             mostrarMensaje("❌ Ese email ya está en uso");
+
+            document.getElementById("email").value = emailOriginal;
+            document.getElementById("nombre").value = nombreOriginal;
+
             return;
         }
+
 
         if (!res.ok) {
             mostrarMensaje("Error al actualizar perfil");

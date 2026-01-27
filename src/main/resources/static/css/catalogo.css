@@ -238,11 +238,9 @@ dialog {
 }
 
 /* ==================================================
-   ESTILOS PARA PC / TABLET
-   Se aplican desde 768px en adelante
+   ESTILOS SOLO PARA PC
 ================================================== */
-
-@media (min-width: 768px) {
+@media (min-width: 992px) {
 
     /* Logo */
     .logo-wrapper img {
@@ -314,6 +312,7 @@ dialog {
         min-width: 130px;
     }
 }
+
 
 /* ===============================
    MENÚ Y FILTROS MÓVIL
