@@ -52,4 +52,17 @@ async function cargarPedidos() {
     });
 }
 
+/* ===============================
+   Menú móvil pedidos
+================================ */
+const btnMenuPedidos = document.getElementById("btn-menu-pedidos");
+
+if (btnMenuPedidos) {
+    btnMenuPedidos.addEventListener("click", () => {
+        document.body.classList.toggle("menu-abierto");
+    });
+}
+
+
+
 cargarPedidos();

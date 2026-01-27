@@ -82,5 +82,26 @@ body {
     text-decoration: underline;
 }
 
+@media (max-width: 576px) {
+    .login-card {
+        padding: 28px 22px;
+    }
+
+    .login-logo {
+        height: 70px;
+    }
+}
+
+.btn-success:disabled {
+    background-color: #9bbfa8;
+    cursor: not-allowed;
+}
+
+.form-control:focus-visible {
+    outline: none;
+}
+
+
+
 
 
