@@ -3,14 +3,20 @@ package com.jardineria.controller;
 import com.jardineria.model.Categoria;
 import com.jardineria.model.Producto;
 import com.jardineria.service.ProductoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.HashMap;
@@ -35,25 +41,28 @@ public class ProductoController {
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public Producto crearProducto(
-            @RequestParam String nombre,
-            @RequestParam String descripcion,
-            @RequestParam Double precio,
-            @RequestParam Integer stock,
+    public ResponseEntity<?> crearProducto(
+            @Valid Producto producto,
+            BindingResult result,
             @RequestParam Long categoriaId,
             @RequestParam(required = false) MultipartFile imagen
     ) {
-        Producto producto = new Producto();
-        producto.setNombre(nombre);
-        producto.setDescripcion(descripcion);
-        producto.setPrecio(precio);
-        producto.setStock(stock);
-        producto.setCategoria(new Categoria(categoriaId, null, null));
 
-        return productoService.guardar(producto, imagen);
+        if (result.hasErrors()) {
+            String mensaje = result.getFieldError().getDefaultMessage();
+            return ResponseEntity.badRequest().body(mensaje);
+        }
+
+        producto.setCategoria(new Categoria(categoriaId, null, null));
+        Producto guardado = productoService.guardar(producto, imagen);
+
+        return ResponseEntity.ok(guardado);
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Producto actualizarProducto(
             @PathVariable Long id,
@@ -76,6 +85,7 @@ public class ProductoController {
         return productoService.guardar(productoExistente, imagen);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void eliminarProducto(@PathVariable Long id) {
         productoService.eliminar(id);

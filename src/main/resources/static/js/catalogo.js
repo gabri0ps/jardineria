@@ -315,21 +315,27 @@ document.getElementById("btn-submit-producto").addEventListener("click", async (
    Eliminar producto
 ================================ */
 async function eliminarProducto(id) {
-    if (!confirm("¿Eliminar producto?")) return;
+    mostrarConfirmacion("🗑 ¿Eliminar producto?", async () => {
+        try {
+            const res = await fetch(`${API_PRODUCTOS}/${id}`, {
+                method: "DELETE"
+            });
 
-    try {
-        const res = await fetch(`${API_PRODUCTOS}/${id}`, { method: "DELETE" });
-        if (res.ok) {
-            mostrarMensaje("Producto eliminado");
+            if (!res.ok) {
+                mostrarMensaje("❌ Error al eliminar producto");
+                return;
+            }
+
+            mostrarMensaje("✅ Producto eliminado correctamente");
             cargarProductosPagina(paginaActual);
-        } else {
-            mostrarMensaje("Error al eliminar producto");
+
+        } catch (err) {
+            console.error(err);
+            mostrarMensaje("❌ Error al eliminar producto");
         }
-    } catch (err) {
-        console.error(err);
-        mostrarMensaje("Error al eliminar producto");
-    }
+    });
 }
+
 
 /* ===============================
    Crear categoría
@@ -420,12 +426,20 @@ async function añadirAlCarrito(id, stockDisponible) {
         );
 
         if (!res.ok) {
-            const msg = await res.text();
-            mostrarMensaje(msg || "No se pudo añadir el producto al carrito");
+            if (res.status === 409) {
+                const msg = await res.text();
+                mostrarMensaje("❌ No hay stock");
+                return;
+            }
+
+            mostrarMensaje("❌ Error al añadir el producto al carrito");
             return;
         }
 
+
         mostrarMensaje("Producto añadido al carrito");
+
+
     } catch (err) {
         console.error(err);
         mostrarMensaje("Error al añadir producto al carrito");

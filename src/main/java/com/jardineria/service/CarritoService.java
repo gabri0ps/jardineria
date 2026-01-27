@@ -9,7 +9,9 @@ import com.jardineria.repository.ProductoRepository;
 import com.jardineria.repository.CarritoItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -49,12 +51,19 @@ public class CarritoService {
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
         if (producto.getStock() == 0) {
-            throw new RuntimeException("Producto sin stock");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Producto sin stock"
+            );
         }
 
         if (cantidad > producto.getStock()) {
-            throw new RuntimeException("No hay stock suficiente");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "No hay stock suficiente"
+            );
         }
+
 
         Optional<CarritoItem> existente = carrito.getItems().stream()
                 .filter(i -> i.getProducto().getId().equals(productoId))
@@ -65,8 +74,12 @@ public class CarritoService {
             int nuevaCantidad = item.getCantidad() + cantidad;
 
             if (nuevaCantidad > producto.getStock()) {
-                throw new RuntimeException("No hay stock suficiente");
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "No hay stock suficiente"
+                );
             }
+
 
             item.setCantidad(nuevaCantidad);
             carritoItemRepository.save(item);
@@ -123,7 +136,10 @@ public class CarritoService {
     public Carrito actualizarCantidad(Long usuarioId, Long itemId, int cantidad) {
 
         if (cantidad < 1) {
-            throw new RuntimeException("Cantidad inválida");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Cantidad inválida"
+            );
         }
 
         Carrito carrito = obtenerCarrito(usuarioId);
@@ -136,7 +152,10 @@ public class CarritoService {
         Producto producto = item.getProducto();
 
         if (cantidad > producto.getStock()) {
-            throw new RuntimeException("No hay stock suficiente");
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "No hay stock suficiente"
+            );
         }
 
         item.setCantidad(cantidad);

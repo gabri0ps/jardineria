@@ -20,10 +20,17 @@ document.getElementById("formUsuario").addEventListener("submit", async (e) => {
       body: JSON.stringify(usuario)
     });
 
+    if (res.status === 409) {
+      mostrarMensaje("❌ Ese email ya está registrado. Usa otro diferente.");
+      return;
+    }
+
     if (!res.ok) {
       const error = await res.text();
-      throw new Error(error);
+      mostrarMensaje("❌ Error al registrar usuario: " + error);
+      return;
     }
+
 
     const data = await res.text();
     mostrarMensaje(data);
@@ -32,4 +39,6 @@ document.getElementById("formUsuario").addEventListener("submit", async (e) => {
   } catch (err) {
     mostrarMensaje("Error: " + err.message);
   }
+
+
 });

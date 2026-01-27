@@ -57,9 +57,28 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public Usuario guardarUsuario(Usuario usuario) {
+
+        // Normalizar campos de texto
+        usuario.setNombre(usuario.getNombre().trim());
+        usuario.setEmail(usuario.getEmail().trim().toLowerCase());
+
+        if (usuario.getDireccion() != null) {
+            usuario.setDireccion(usuario.getDireccion().trim());
+        }
+
+        if (usuario.getTelefono() != null) {
+            usuario.setTelefono(usuario.getTelefono().trim());
+        }
+
+        // Seguridad: forzar rol
+        usuario.setRol(Usuario.Rol.cliente);
+
+        // Encriptar contraseña
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
         return usuarioRepository.save(usuario);
     }
+
 
 
     public Optional<Usuario> login(String email, String password) {
@@ -73,16 +92,17 @@ public class UsuarioService implements UserDetailsService {
 
         // SOLO campos permitidos
         if (datos.getNombre() != null && !datos.getNombre().isBlank()) {
-            usuarioBD.setNombre(datos.getNombre());
+            usuarioBD.setNombre(datos.getNombre().trim());
         }
 
         if (datos.getEmail() != null && !datos.getEmail().isBlank()) {
-            usuarioBD.setEmail(datos.getEmail());
+            usuarioBD.setEmail(datos.getEmail().trim().toLowerCase());
         }
 
         if (datos.getPassword() != null && !datos.getPassword().isBlank()) {
             usuarioBD.setPassword(passwordEncoder.encode(datos.getPassword()));
         }
+
 
         // NO tocar rol, id, pedidos, etc.
 

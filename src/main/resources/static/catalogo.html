@@ -137,9 +137,18 @@
 <dialog id="dialogMensaje">
     <div class="dialog-contenido">
         <p id="mensajeTexto">Mensaje</p>
-        <button id="cerrarMensaje">Cerrar</button>
+
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <button id="btn-confirmar" class="btn btn-danger d-none">
+                Eliminar
+            </button>
+            <button id="cerrarMensaje" class="btn btn-secondary">
+                Aceptar
+            </button>
+        </div>
     </div>
 </dialog>
+
 
 <script src="js/catalogo.js"></script>
 <script src="js/dialog.js"></script>

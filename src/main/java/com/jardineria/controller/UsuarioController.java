@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -32,15 +33,24 @@ public class UsuarioController {
 
     @PostMapping("/registro")
     public ResponseEntity<?> registrarUsuario(@Valid @RequestBody Usuario usuario, BindingResult result) {
+
         if (result.hasErrors()) {
-            // Devolver primer mensaje de error
             String mensajeError = result.getFieldError().getDefaultMessage();
             return ResponseEntity.badRequest().body(mensajeError);
         }
 
-        usuarioService.guardarUsuario(usuario); // Lógica para guardar en BD
-        return ResponseEntity.ok("Usuario registrado con éxito ✅");
+        try {
+            usuarioService.guardarUsuario(usuario);
+            return ResponseEntity.ok("Usuario registrado con éxito ✅");
+
+        } catch (DataIntegrityViolationException e) {
+            // Email duplicado
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Ese email ya está registrado");
+        }
     }
+
 
     @PutMapping("/perfil")
     public Usuario actualizarPerfil(@RequestBody Usuario datos) {

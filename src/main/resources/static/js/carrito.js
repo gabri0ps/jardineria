@@ -1,5 +1,8 @@
 const API_CARRITO = "http://localhost:8080/carrito";
 
+let carritoActual = null;
+
+
 // Obtener usuario del localStorage
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 if (!usuario) {
@@ -34,6 +37,14 @@ document.getElementById("contenedor-cerrar-sesion")
 
 // ---- Botón finalizar compra ----
 document.getElementById("btn-comprar").addEventListener("click", async () => {
+
+      // COMPROBACIÓN SI EL CARRITO ESTÁ VACÍO
+        if (!carritoActual || !carritoActual.items || carritoActual.items.length === 0) {
+            mostrarMensaje("🛒 Tu carrito está vacío. Añade productos antes de finalizar la compra.");
+            return;
+        }
+
+
     try {
         const res = await fetch(`http://localhost:8080/pedido/finalizar/${usuarioId}`, {
             method: "POST"
@@ -56,23 +67,29 @@ document.getElementById("btn-comprar").addEventListener("click", async () => {
 async function cargarCarrito() {
     try {
         const res = await fetch(`http://localhost:8080/carrito/${usuarioId}`);
-        const carrito = await res.json();
-        renderCarrito(carrito);
+        carritoActual = await res.json(); // 👈 GUARDAR
+        renderCarrito(carritoActual);
     } catch (err) {
         console.error("Error cargando carrito:", err);
     }
 }
 
+
 // ---- Renderizar carrito ----
 function renderCarrito(carrito) {
+
+    carritoActual = carrito;
+
     const tbody = document.getElementById("carrito-body");
     tbody.innerHTML = "";
 
     if (!carrito.items || carrito.items.length === 0) {
+        carritoActual = { items: [] };
         tbody.innerHTML = `<tr><td colspan="5">No hay productos en el carrito</td></tr>`;
         document.getElementById("total").textContent = "0.00 €";
         return;
     }
+
 
     let total = 0;
 
@@ -154,13 +171,20 @@ function renderCarrito(carrito) {
 // ---- Eliminar item ----
 async function eliminarItem(itemId) {
     try {
-        const res = await fetch(`http://localhost:8080/carrito/${usuarioId}/eliminar/${itemId}`, { method: "DELETE" });
+        const res = await fetch(
+            `http://localhost:8080/carrito/${usuarioId}/eliminar/${itemId}`,
+            { method: "DELETE" }
+        );
+
         const carrito = await res.json();
+        carritoActual = carrito; // 👈 CLAVE
         renderCarrito(carrito);
+
     } catch (err) {
         console.error("Error eliminando item:", err);
     }
 }
+
 
 /* ===============================
    Menú móvil carrito
