@@ -212,6 +212,16 @@ function renderizarPaginacion() {
     const contenedor = document.getElementById("paginacion");
     contenedor.innerHTML = "";
 
+    // ⏮ Primera página (solo si no estamos en la primera)
+    if (paginaActual > 0) {
+        const btnFirst = document.createElement("button");
+        btnFirst.textContent = "⏮ Primera";
+        btnFirst.className = "btn btn-secondary me-1";
+        btnFirst.onclick = () => cargarProductosPagina(0);
+        contenedor.appendChild(btnFirst);
+    }
+
+    // « Anterior
     const btnPrev = document.createElement("button");
     btnPrev.textContent = "« Anterior";
     btnPrev.className = "btn btn-secondary me-1";
@@ -219,13 +229,24 @@ function renderizarPaginacion() {
     btnPrev.onclick = () => cargarProductosPagina(paginaActual - 1);
     contenedor.appendChild(btnPrev);
 
+    // Siguiente »
     const btnNext = document.createElement("button");
     btnNext.textContent = "Siguiente »";
-    btnNext.className = "btn btn-secondary";
+    btnNext.className = "btn btn-secondary me-1";
     btnNext.disabled = paginaActual >= totalPaginas - 1;
     btnNext.onclick = () => cargarProductosPagina(paginaActual + 1);
     contenedor.appendChild(btnNext);
+
+    // ⏭ Última página (solo si no estamos en la última)
+    if (paginaActual < totalPaginas - 1) {
+        const btnLast = document.createElement("button");
+        btnLast.textContent = "Última ⏭";
+        btnLast.className = "btn btn-secondary";
+        btnLast.onclick = () => cargarProductosPagina(totalPaginas - 1);
+        contenedor.appendChild(btnLast);
+    }
 }
+
 
 /* ===============================
    Editar producto
