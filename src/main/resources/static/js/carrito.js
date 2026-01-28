@@ -67,7 +67,7 @@ document.getElementById("btn-comprar").addEventListener("click", async () => {
 async function cargarCarrito() {
     try {
         const res = await fetch(`http://localhost:8080/carrito/${usuarioId}`);
-        carritoActual = await res.json(); // 👈 GUARDAR
+        carritoActual = await res.json();
         renderCarrito(carritoActual);
     } catch (err) {
         console.error("Error cargando carrito:", err);
@@ -177,7 +177,7 @@ async function eliminarItem(itemId) {
         );
 
         const carrito = await res.json();
-        carritoActual = carrito; // 👈 CLAVE
+        carritoActual = carrito;
         renderCarrito(carrito);
 
     } catch (err) {

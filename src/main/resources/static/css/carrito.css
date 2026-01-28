@@ -143,7 +143,7 @@ header .btn {
 }
 
 /* ===============================
-   INPUTS DE CANTIDAD (si los usas)
+   INPUTS DE CANTIDAD
 ================================ */
 
 input[type="number"] {
@@ -212,14 +212,14 @@ input[type="number"] {
         order: 2;
     }
 
-    /* OCULTAR acciones por defecto */
+    /* Ocultar acciones por defecto */
     .header-actions {
         display: none !important;
         order: 3;
         margin-top: 12px;
     }
 
-    /* MOSTRAR acciones al abrir menú */
+    /* Mostrar acciones al abrir menú */
     body.menu-abierto .header-actions {
         display: flex !important;
         flex-direction: column;

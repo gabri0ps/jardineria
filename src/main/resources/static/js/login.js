@@ -35,10 +35,10 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             // Guardar usuario
             localStorage.setItem("usuario", JSON.stringify(usuario));
 
-            // Mostrar mensaje elegante
+            // Mostrar mensaje
             mostrarMensaje(`Bienvenido, ${usuario.nombre}`);
 
-            // Redirigir tras un pequeño delay
+            // Redirigir
             setTimeout(() => {
                 window.location.href = "catalogo.html";
             }, 1200);

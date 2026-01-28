@@ -25,7 +25,7 @@ public class PedidoService {
     @Transactional
     public Pedido finalizarPedido(Long usuarioId) {
 
-        // 1️⃣ Obtener carrito
+        //Obtener carrito
         Carrito carrito = carritoRepository.findByUsuarioId(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
 
@@ -33,7 +33,7 @@ public class PedidoService {
             throw new RuntimeException("El carrito está vacío");
         }
 
-        // 2️⃣ Restar stock (ANTES de crear el pedido)
+        //Restar stock (Antes de crear el pedido)
         carrito.getItems().forEach(item -> {
             var producto = item.getProducto();
 
@@ -47,14 +47,14 @@ public class PedidoService {
             productoRepository.save(producto);
         });
 
-        // 3️⃣ Crear pedido
+        //Crear pedido
         Pedido pedido = Pedido.builder()
                 .usuario(carrito.getUsuario())
                 .total(carrito.getTotal())
                 .estado(Pedido.EstadoPedido.pendiente) // 👈 CORRECTO
                 .build();
 
-        // 4️⃣ Crear detalles del pedido
+        //Crear detalles del pedido
         List<DetallePedido> detalles = carrito.getItems().stream()
                 .map(item -> DetallePedido.builder()
                         .producto(item.getProducto())
@@ -66,10 +66,10 @@ public class PedidoService {
 
         pedido.setItems(detalles);
 
-        // 5️⃣ Guardar pedido
+        //Guardar pedido
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
 
-        // 6️⃣ Vaciar carrito
+        //Vaciar carrito
         carrito.getItems().clear();
         carrito.setTotal(0.0);
         carritoRepository.save(carrito);

@@ -61,7 +61,7 @@ btnCrearProducto.addEventListener("click", () => {
     // Cerrar categoría si está abierta
     formCategoria.style.display = "none";
 
-    // Resetear formulario producto SOLO al abrir
+    // Resetear formulario producto solo al abrir
     if (formProducto.style.display === "none") {
         productoEditandoId = null;
         imagenActual = null;
@@ -241,8 +241,7 @@ async function editarProducto(id) {
         document.getElementById("stock").value = p.stock;
         document.getElementById("categoria").value = p.categoria.id;
 
-         // LIMPIAR INPUT FILE
-         document.getElementById("imagen").value = "";
+        document.getElementById("imagen").value = "";
 
         productoEditandoId = p.id;
         imagenActual = p.imagen;
@@ -390,7 +389,7 @@ document.getElementById("btn-guardar-categoria").addEventListener("click", async
         document.getElementById("nombreCategoria").value = "";
         formCrearCategoria.style.display = "none";
 
-        // 🔄 Recargar categorías en selects
+        //Recargar categorías en selects
         cargarCategorias();
         cargarCategoriasFiltro();
 

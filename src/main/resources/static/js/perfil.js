@@ -25,7 +25,7 @@ if (!usuario) {
 document.getElementById("nombre").value = usuario.nombre;
 document.getElementById("email").value = usuario.email;
 
-// 👇 GUARDAMOS VALORES ORIGINALES
+//GUARDAMOS VALORES ORIGINALES
 let emailOriginal = usuario.email;
 let nombreOriginal = usuario.nombre;
 

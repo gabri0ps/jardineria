@@ -53,7 +53,7 @@ public class ProductoService {
                         .orElseThrow(() -> new RuntimeException("Categoría no válida"))
         );
 
-        // SOLO cambiar imagen si se sube una nueva
+        // Solo cambiar imagen si se sube una nueva
         if (imagen != null && !imagen.isEmpty()) {
 
             // borrar imagen antigua si existe
@@ -85,10 +85,6 @@ public class ProductoService {
             throw new RuntimeException("Error al borrar imagen", e);
         }
     }
-
-
-
-
 
 
     private String guardarImagen(MultipartFile imagen) {

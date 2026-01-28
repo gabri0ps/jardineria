@@ -25,7 +25,7 @@ public class LogInController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario userReq, HttpSession session) {
 
-        // 1️⃣ Comprobamos credenciales (BCrypt)
+        //Comprobamos credenciales (BCrypt)
         var usuarioOpt = usuarioService.login(userReq.getEmail(), userReq.getPassword());
         if (usuarioOpt.isEmpty()) {
             return ResponseEntity.status(401).body("Credenciales incorrectas");
@@ -33,26 +33,24 @@ public class LogInController {
 
         Usuario usuario = usuarioOpt.get();
 
-        // 2️⃣ Creamos autenticación (SIN contraseña)
+        //Creamos autenticación
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
                         usuario.getEmail(),
-                        null, // ✅ NUNCA poner la contraseña aquí
+                        null,
                         List.of(new SimpleGrantedAuthority(
                                 "ROLE_" + usuario.getRol().name().toUpperCase()
                         ))
                 );
 
-        // 3️⃣ Subimos al contexto de seguridad
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        // 4️⃣ Guardamos el contexto en sesión
         session.setAttribute(
                 "SPRING_SECURITY_CONTEXT",
                 SecurityContextHolder.getContext()
         );
 
-        // 5️⃣ Guardamos usuario para el frontend
+        //Guardamos usuario para el frontend
         session.setAttribute("usuario", usuario);
 
         return ResponseEntity.ok(usuario);

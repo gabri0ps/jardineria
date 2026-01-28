@@ -20,8 +20,6 @@ public class SecurityConfig {
                         .requestMatchers("/**").permitAll()   // Permitir todas las peticiones
                 );
 
-        // No necesitamos formLogin ni httpBasic si controlas permisos desde frontend
-
         return http.build();
     }
 
