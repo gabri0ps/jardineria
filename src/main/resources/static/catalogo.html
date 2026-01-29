@@ -44,6 +44,9 @@
         <button id="btn-crear-categoria" class="btn btn-outline-success">
             ➕ Crear categoría
         </button>
+        <button id="btn-eliminar-categoria" class="btn btn-danger">
+            🗑 Eliminar categoría
+        </button>
     </div>
 
     <!-- FILTROS PRINCIPALES: categoría, precio, stock -->
@@ -120,9 +123,22 @@
         </button>
     </div>
 
+        <div id="form-eliminar-categoria" class="card mt-3 p-3" style="display:none;">
+            <h5>Eliminar categoría</h5>
+
+            <select id="categoriaEliminar" class="form-select mb-2">
+                <option value="">Selecciona una categoría</option>
+            </select>
+
+            <button id="btn-confirmar-eliminar-categoria" class="btn btn-danger">
+                🗑 Eliminar categoría
+            </button>
+        </div>
 
 
-    <!-- Contenedor de productos -->
+
+
+        <!-- Contenedor de productos -->
     <div id="productos" class="row g-4"></div>
 
     <div id="paginacion" class="d-flex justify-content-center mt-4"></div>

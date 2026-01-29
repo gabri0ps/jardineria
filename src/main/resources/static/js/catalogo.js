@@ -45,6 +45,8 @@ if (usuario && usuario.rol === "admin") {
     document.getElementById("admin-actions").style.display = "flex";
 }
 
+
+
 const usuarioId = usuario.id;
 
 /* ===============================
@@ -399,20 +401,26 @@ document.getElementById("btn-guardar-categoria").addEventListener("click", async
             body: JSON.stringify({ nombre })
         });
 
-        if (!res.ok) {
-            const msg = await res.text();
-            mostrarMensaje("Error: " + msg);
+        if (res.status === 409) {
+            mostrarMensaje("❌ La categoría ya existe");
             return;
         }
 
-        mostrarMensaje("Categoría creada correctamente");
+        if (!res.ok) {
+            mostrarMensaje("❌ Error al crear la categoría");
+            return;
+        }
+
+        mostrarMensaje("✅ Categoría creada correctamente");
 
         document.getElementById("nombreCategoria").value = "";
         formCrearCategoria.style.display = "none";
 
-        //Recargar categorías en selects
         cargarCategorias();
         cargarCategoriasFiltro();
+        cargarCategoriasEliminar();
+
+
 
     } catch (err) {
         console.error(err);
@@ -466,6 +474,77 @@ async function añadirAlCarrito(id, stockDisponible) {
     }
 }
 
+/* ===============================
+   Eliminar categoría
+================================ */
+document.getElementById("btn-eliminar-categoria").addEventListener("click", () => {
+    const formEliminar = document.getElementById("form-eliminar-categoria");
+    const formProducto = document.getElementById("form-crear-producto");
+    const formCategoria = document.getElementById("form-crear-categoria");
+
+    // Cerrar los otros formularios
+    formProducto.style.display = "none";
+    formCategoria.style.display = "none";
+
+    // Toggle eliminar categoría
+    formEliminar.style.display =
+        formEliminar.style.display === "none" ? "block" : "none";
+});
+
+async function cargarCategoriasEliminar() {
+    const res = await fetch(API_CATEGORIAS);
+    const categorias = await res.json();
+
+    const select = document.getElementById("categoriaEliminar");
+    select.innerHTML = `<option value="">Selecciona una categoría</option>`;
+
+    categorias.forEach(c => {
+        select.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
+    });
+}
+
+document.getElementById("btn-confirmar-eliminar-categoria").addEventListener("click", async () => {
+
+        const categoriaId = document.getElementById("categoriaEliminar").value;
+
+        if (!categoriaId) {
+            mostrarMensaje("Selecciona una categoría a eliminar");
+            return;
+        }
+
+        mostrarConfirmacion("🗑 ¿Eliminar categoría?", async () => {
+            try {
+                const res = await fetch(`${API_CATEGORIAS}/${categoriaId}`, {
+                    method: "DELETE"
+                });
+
+                if (res.status === 409) {
+                    mostrarMensaje("❌ No se puede eliminar la categoría porque tiene productos asociados");
+                    return;
+                }
+
+
+
+                if (!res.ok) {
+                    mostrarMensaje("❌ Error al eliminar la categoría");
+                    return;
+                }
+
+                mostrarMensaje("✅ Categoría eliminada correctamente");
+
+                cargarCategorias();
+                cargarCategoriasFiltro();
+                cargarCategoriasEliminar();
+
+                document.getElementById("form-eliminar-categoria").style.display = "none";
+
+            } catch (err) {
+                console.error(err);
+                mostrarMensaje("❌ Error al eliminar categoría");
+            }
+        });
+    });
+
 
 /* ===============================
    Filtrar / ordenar
@@ -515,3 +594,7 @@ if (btnFiltrosMovil) {
 cargarCategorias();
 cargarCategoriasFiltro();
 cargarProductosPagina(0);
+
+if (usuario && usuario.rol === "admin") {
+    cargarCategoriasEliminar();
+}

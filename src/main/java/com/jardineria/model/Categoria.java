@@ -18,7 +18,9 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String nombre;
+
 
     // Relación con productos
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)

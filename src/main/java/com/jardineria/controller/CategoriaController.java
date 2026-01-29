@@ -1,9 +1,13 @@
 package com.jardineria.controller;
 
 import com.jardineria.model.Categoria;
+import com.jardineria.repository.CategoriaRepository;
 import com.jardineria.service.CategoriaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +41,10 @@ public class CategoriaController {
     }
 
     @DeleteMapping("/{id}")
-    public void eliminarCategoria(@PathVariable Long id) {
+    public ResponseEntity<?> eliminarCategoria(@PathVariable Long id) {
         categoriaService.eliminar(id);
+        return ResponseEntity.ok().build();
     }
+
+
 }
